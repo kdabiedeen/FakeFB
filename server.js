@@ -38,6 +38,13 @@ app.get('/logIn', function(req,res){
 app.post('/logIn', middleWare, function(req, res) {
   console.log(req.body.username);
   console.log(req.body.password);
+
+  var loggedIn = 0;
+
+  if(loggedIn)
+    return res.redirect('./main.html');
+  else
+    return res.redirect('./login.html');
   /*
 	connection.query('SELECT * FROM User', function(err, results){
     if(err){
