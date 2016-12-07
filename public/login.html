@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
+  <script src="../Scripts/Login.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -17,14 +18,14 @@
 <h1>Welcome!</h1>
 
 <div class="form-group">
-  <form action="/logIn" method="post" enctype="X-www-form-urlencoded">
+  <form>
     <fieldset>
       <label for="usr">Username:</label>
       <input type="text" class="form-control" id="usr" name="username">
       <label for="pwd">Password:</label>
       <input type="password" class="form-control" id="pwd" name="password">
       <br></br>
-      <button type="submit" class="btn btn-primary btn-md custom">Log In</button>
+      <button type="button" onclick="executeLogin()" class="btn btn-primary btn-md custom">Log In</button>
     </fieldset>
   </form>
 </div>
@@ -60,6 +61,21 @@
 
 <br></br>
 
+<script>
+  function executeLogin(){
+    var UserId = 15;
+    $.get("/login", {"username": 4, "password" : 5}, function(data) {
+        var emptyObject = data.hasOwnProperty('message');
+
+        if(!emptyObject){
+          localStorage.setItem("id", data.UserId);
+          window.location.replace("./main.html");
+        } else {
+          alert("Try Again");
+        }
+      });
+  }
+</script>
 
 </body>
 </html>

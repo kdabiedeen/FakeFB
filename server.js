@@ -31,10 +31,39 @@ var middleWare = (bodyParser.urlencoded({
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/logIn', function(req,res){
-
+app.get('/login', function(req,res){
+  console.log(req.param("username"));
+  console.log(req.param("password"));
+  connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("username") + ";", function(err, results) {
+    if (err) {
+      return res.json({ message: "ERROR" });
+    } else {
+      var user = results[0];
+      if(user != undefined) {
+      return res.json({
+        UserId: user.UserId,
+        LastName: user.LastName,
+        FirstName: user.FirstName,
+        Address: user.Address,
+        City: user.City,
+        State: user.State,
+        ZipCode: user.ZipCode,
+        Telephone: user.Telephone,
+        Email: user.Email,
+        AcctNum: user.AcctNum,
+        CreditCard: user.CreditCard,
+        Created: user.Created,
+        Preferences: user.Preferences,
+        Rating: user.Rating
+      });
+    } else {
+      return res.json({ message: "ERROR" });
+    }
+    }
+  })
 });
 
+/*
 app.post('/logIn', middleWare, function(req, res) {
   console.log(req.body.username);
   console.log(req.body.password);
@@ -71,8 +100,9 @@ app.post('/logIn', middleWare, function(req, res) {
 
     }
 	});
-  */
+
 });
+*/
 
 app.get("/displayUser", function(req, res) {
   connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("UserId") + ";", function(err, results) {
@@ -182,7 +212,7 @@ app.get("/displayComment", function(req, res) {
 });
 
 app.get("/showComments", function(req, res) {
-  connection.query("SELECT CommentId FROM Comment WHERE Comment.Post = " + req.param("PostId") + ";", function(err, results) {    
+  connection.query("SELECT CommentId FROM Comment WHERE Comment.Post = " + req.param("PostId") + ";", function(err, results) {
     if (err) {
       return res.json( { err: err });
     }
