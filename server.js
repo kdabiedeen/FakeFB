@@ -62,45 +62,46 @@ app.get('/login', function(req,res){
   })
 });
 
-app.post('/signUp', function(req, res) {
+app.get('/signUp', function(req, res) {
   // get the userId, then insert
-  var querystring1 = "SELECT MAX(UserId) FROM User";
+  var querystring1 = "SELECT MAX(UserId) as max FROM User;";
+  var max = -1;
   connection.query(querystring1, function(err, results) {
     if (err) {
+      console.log(err);
       return res.json({message:"ERROR"});
     } else {
       var UserId = results[0];
       var date = new Date();
       var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
-      var querystring2 = "INSERT INTO User (UserId, LastName, FirstName, Address, City, State, ZipCode, Telephone, Email, AcctNum, Created, CreditCard, Preferences, Rating) " +
-                        "VALUES (" + UserId + ", '" + req.param("LastName") +"', '" + req.param("FirstName") + "', '" +
-                        req.param("Address") + "', '" + req.param("City") + "', '" + req.param("State") + "', " + 
-                        req.param("ZipCode") + ", '" + req.param("Telephone") + "', '" + req.param("Email") + "', " +
-                        req.param("AcctNum") + ", '" + dateString +"', " + req.param("CreditCard") + ", '" + req.param("Preferences") + "', 0);"
-      connection.query(querystring2, function(err, results) {
+      console.log(req.param("LastName"));
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO User (UserId, LastName, FirstName, Address, City, State, ZipCode, Telephone, Email, AcctNum, Created, CreditCard, Preferences, Rating) " +
+                        "VALUES (" + (max + 1) + ",\'" + req.param("LastName") + "\',\'"  + req.param("FirstName") + "\',\'" +
+                        req.param("Address") + "\',\'"  + req.param("City") + "\',\'"  + req.param("State") + "\',"  +
+                        req.param("ZipCode") + ","  + req.param("Telephone") + ",\'"  + req.param("Email") + "\',"  +
+                        req.param("AcctNum") + ",\'"  + dateString + "\',"  + req.param("CreditCard") + ","  + req.param("Preferences") + ",0);";
+    console.log(querystring2);
+    connection.query(querystring2, function(err, results) {
         if (err) {
+          console.log(err);
           return res.json( { message:"ERROR"});
         } else {
-          var querystring3 = "SELECT * FROM User WHERE User.UserId = " + UserId + ";";
+          var querystring3 = "SELECT * FROM User WHERE User.UserId = " + (max + 1) + ";";
+          console.log(querystring3);
           connection.query(querystring3, function(err, results) {
-            if (err) {
-              return res.json( { message: "ERROR"});
-            } else {
-              return res.json(results[0]);
+          console.log(results[0]);
+          if (err) {
+            console.log(err);
+            return res.json( { message:"ERROR"});
+          } else {
+            return res.json(results[0]);
             }
           })
         }
       })
-    }
-  });
-
-  var loggedIn = 0;
-
-  if(loggedIn)
-    return res.redirect('./main.html');
-  else
-    return res.redirect('./login.html');
-
+    });
 });
 
 app.get("/displayUser", function(req, res) {
@@ -242,7 +243,7 @@ app.get("/displayMessage", function(req, res) {
                     "Sender.UserId as senderId, Sender.FirstName as senderFirst, Sender.LastName as senderLast, " +
                     "Receiver.UserId as receiverId, Receiver.FirstName as receiverFirst, Receiver.LastName as receiverLast " +
                     "FROM Message, User Sender, User Receiver " +
-                    "WHERE Message.MessageId = " + req.param("MessageId") + 
+                    "WHERE Message.MessageId = " + req.param("MessageId") +
                     " AND Message.Sender = Sender.UserId AND Message.Receiver = Receiver.UserId";
 
   connection.query(querystring, function(err, results) {

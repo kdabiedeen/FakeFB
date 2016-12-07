@@ -61,7 +61,7 @@
     <label for="Email">CreditCard:</label>
     <input type="text" class="form-control" id="CreditCard">
     <label for="Email">Preferences:</label>
-    <input type="text" class="form-control" id="Preferenes">
+    <input type="text" class="form-control" id="Preferences">
 </div>
 
 <div class="container-fluid">
@@ -90,6 +90,7 @@
   }
 
   function signUp() {
+
     var args = {
       FirstName: $("#FirstName").val(),
       LastName: $("#LastName").val(),
@@ -100,11 +101,11 @@
       Telephone: $("#Telephone").val(),
       Email: $("#Email").val(),
       AcctNum: $("#AcctNum").val(),
-      CreditCard: $("#Creditcard").val(),
+      CreditCard: $("#CreditCard").val(),
       Preferences: $("#Preferences").val(),
     }
 
-    $.post("/signUp", args, function(data) {
+    $.get("/signUp", args, function(data) {
       var emptyObject = data.hasOwnProperty('message');
       if (!emptyObject) {
 
