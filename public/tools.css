@@ -1,0 +1,272 @@
+/* User Styling */
+.user {
+	min-width: 400px;
+	min-height: 600px;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+	margin: 10px;
+}
+
+.user_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.user_image {
+	width: 150px;
+	height: 150px;
+	border: 1px solid #aaa;
+}
+
+.user_name {
+	font-size: 32px;
+	font-weight: bold;
+	float: right;
+}
+
+.user_info {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #aaa;
+}
+
+/* Post Styling */
+.post {
+	width: 500px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+	margin: 10px;
+}
+
+.post_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.post_name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.post_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.post_footer {
+	border: 0px dashed #aaa;
+	border-top-width: 1px;
+	margin: 5px;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.post_likes {
+	float: left;
+}
+
+.post_comments {
+	float: right;
+}
+
+.post_comments:hover {
+	cursor: pointer;
+}
+
+/* Group Styling */
+.group {
+	width: 500px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+}
+
+.group_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.group_name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.group_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.group_member {
+
+}
+
+/* Page Styling */
+.page {
+	width: 500px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+}
+
+.page_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.page_name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.page_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.page_member {
+
+}
+
+/* Comment Styling */
+.comment {
+	width: 300px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+}
+
+.comment_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.comment_name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.comment_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.comment_footer {
+	border: 0px dashed #aaa;
+	border-top-width: 1px;
+	margin: 5px;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.comment_likes {
+	float: left;
+}
+
+/* Message Styling */
+.message {
+	width: 300px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+}
+
+.message_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.message_name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.message_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.message_footer {
+	border: 0px dashed #aaa;
+	border-top-width: 1px;
+	margin: 5px;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.message_date {
+	float:right;
+}
+
+/* Advertisement Styling */
+.ad {
+	width: 500px;
+	min-height: 100px;
+	overflow: auto;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	display: inline-block;
+}
+
+.ad_header {
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+	border: 0px solid #aaa;
+	border-bottom-width: 1px;
+}
+
+.ad_item {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.ad_body {
+	margin: 5px;
+	padding: 5px;
+}
+
+.ad_footer {
+	border: 0px dashed #aaa;
+	border-top-width: 1px;
+	margin: 5px;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.ad_price {
+	float: left;
+}
+
+.ad_numunits {
+	float: right;
+}

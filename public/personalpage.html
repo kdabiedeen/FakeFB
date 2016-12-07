@@ -10,9 +10,27 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="../Scripts/User.js"></script>
+  <script src="../Scripts/Post.js"></script>
+  <script src="../Scripts/Comment.js"></script>
+  <script src="../Scripts/Page.js"></script>
   <script src="../Scripts/jquery-3.1.0.min.js"></script>
+
+
+
+  <style>
+
+  </style>
+
   <script>
-  
+    $(function() {
+      var UserId = 5;
+
+      Page.DisplayPage(UserId, "pageHeader");
+
+      User.DisplayUser(UserId, "profile");
+
+      Post.DisplayAllPerUser(UserId, "posts");
+    })
   </script>
 </head>
 <body>
@@ -22,14 +40,18 @@
         <a class="navbar-brand" href="#">Not Facebook</a>
       </div>
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">News Feed</a></li>
-        <li><a href="./personalpage.html">Personal Page</a></li>
+        <li><a href="#">News Feed</a></li>
+        <li class="active"><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="#">Messages</a></li>
         <li><a href="#">Groups</a></li>
       </ul>
     </div>
   </nav>
 
-  <div id="feed"></div>
+  <div id="pageHeader"></div>
+
+  <div id="profile"></div>
+
+  <div id="posts"></div>
 </body>
 </html>
