@@ -195,6 +195,7 @@
 	background-color: #eee;
 	border: 1px solid #aaa;
 	display: inline-block;
+	margin: 5px;
 }
 
 .message_header {

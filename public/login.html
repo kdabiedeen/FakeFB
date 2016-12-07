@@ -19,10 +19,8 @@
 <div class="form-group">
   <form>
     <fieldset>
-      <label for="usr">Username:</label>
+      <label for="usr">ID:</label>
       <input type="text" class="form-control" id="usr" name="username">
-      <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" name="password">
       <br></br>
       <button type="button" onclick="executeLogin()" class="btn btn-primary btn-md custom">Log In</button>
     </fieldset>
@@ -42,18 +40,32 @@
     </div>
 
 <div class="form-group">
-    <label for="usr">Username:</label>
-    <input type="text" class="form-control" id="usr">
-    <label for="pwd">Password:</label>
-    <input type="password" class="form-control" id="pwd">
-    <label for="firstName">First Name:</label>
-    <input type="text" class="form-control" id="firstName">
-    <label for="lastName">Last Name:</label>
-    <input type="text" class="form-control" id="lastName">
+    <label for="FirstName">First Name:</label>
+    <input type="text" class="form-control" id="FirstName">
+    <label for="LastName">Last Name:</label>
+    <input type="text" class="form-control" id="LastName">
+    <label for="Address">Address:</label>
+    <input type="text" class="form-control" id="Address">
+    <label for="City">City:</label>
+    <input type="text" class="form-control" id="City">
+    <label for="State">State:</label>
+    <input type="text" class="form-control" id="State">
+    <label for="ZipCode">Zip Code:</label>
+    <input type="text" class="form-control" id="ZipCode">
+    <label for="Telephone">Telephone:</label>
+    <input type="text" class="form-control" id="Telephone">
+    <label for="Email">Email:</label>
+    <input type="text" class="form-control" id="Email">
+    <label for="AcctNum">Account Number:</label>
+    <input type="text" class="form-control" id="AcctNum">
+    <label for="Email">CreditCard:</label>
+    <input type="text" class="form-control" id="CreditCard">
+    <label for="Email">Preferences:</label>
+    <input type="text" class="form-control" id="Preferenes">
 </div>
 
 <div class="container-fluid">
-  <button type="button" class="btn btn-primary btn-md custom">Sign Up</button>
+  <button type="button" class="btn btn-primary btn-md custom" onclick="signUp();">Sign Up</button>
 </div>
   </div>
 </div>
@@ -63,16 +75,48 @@
 <script>
   function executeLogin(){
     var UserId = 15;
-    $.get("/login", {"username": 4, "password" : 5}, function(data) {
+    $.get("/login", {"id": $("#usr").val()}, function(data) {
         var emptyObject = data.hasOwnProperty('message');
 
         if(!emptyObject){
           localStorage.setItem("id", data.UserId);
+          localStorage.setItem("FirstName", data.FirstName);
+          localStorage.setItem("LastName", data.LastName);
           window.location.replace("./main.html");
         } else {
           alert("Try Again");
         }
       });
+  }
+
+  function signUp() {
+    var args = {
+      FirstName: $("#FirstName").val(),
+      LastName: $("#LastName").val(),
+      Address: $("#Address").val(),
+      City: $("#City").val(),
+      State: $("#State").val(),
+      ZipCode: $("#ZipCode").val(),
+      Telephone: $("#Telephone").val(),
+      Email: $("#Email").val(),
+      AcctNum: $("#AcctNum").val(),
+      CreditCard: $("#Creditcard").val(),
+      Preferences: $("#Preferences").val(),
+    }
+
+    $.post("/signUp", args, function(data) {
+      var emptyObject = data.hasOwnProperty('message');
+      if (!emptyObject) {
+
+      localStorage.setItem("id", data.UserId);
+      localStorage.setItem("FirstName", data.FirstName);
+      localStorage.setItem("LastName", data.LastName);
+      window.location.replace("./main.html");
+      }
+      else {
+        alert("Try Again");
+      }
+    });
   }
 </script>
 
