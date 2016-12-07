@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'jdbc_class'
+    database: 'innercircle'
 });
 
 connection.connect(function(err){
@@ -105,7 +105,7 @@ app.get('/signUp', function(req, res) {
 });
 
 app.get("/displayUser", function(req, res) {
-  connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("UserId") + ";", function(err, results) {
+  connection.query("SELECT * FROM User WHERE User.UserId = " + req.query.UserId + ";", function(err, results) {
     if (err) {
       return res.json({ message: "ERROR" });
     } else {
@@ -131,7 +131,7 @@ app.get("/displayUser", function(req, res) {
 });
 
 app.get("/displayPost", function(req, res) {
-  connection.query("SELECT * FROM Post, User WHERE Post.PostId = " + req.param("PostId") + " AND Post.Poster = User.UserId;", function(err, results) {
+  connection.query("SELECT * FROM Post, User WHERE Post.PostId = " + req.query.PostId + " AND Post.Poster = User.UserId;", function(err, results) {
     if (err) {
       return res.json( { err: err });
     }
@@ -164,7 +164,7 @@ app.get("/displayPost", function(req, res) {
 });
 
 app.get("/displayAllPosts", function(req, res) {
-  connection.query("SELECT PostId FROM Post WHERE Post.Poster = " + req.param("UserId") + ";", function(err, results) {
+  connection.query("SELECT PostId FROM Post WHERE Post.Poster = " + req.query.UserId + ";", function(err, results) {
     if (err) {
       return res.json( { err: err });
     }
@@ -181,7 +181,7 @@ app.get("/displayAllPosts", function(req, res) {
 });
 
 app.get("/displayComment", function(req, res) {
-  connection.query("SELECT * FROM Comment, User WHERE Comment.CommentId = " + req.param("CommentId") + " AND User.UserId = Comment.Poster;", function(err, results) {
+  connection.query("SELECT * FROM Comment, User WHERE Comment.CommentId = " + req.query.CommentId + " AND User.UserId = Comment.Poster;", function(err, results) {
     if (err) {
       return res.json( {err: err});
     }
@@ -212,7 +212,7 @@ app.get("/displayComment", function(req, res) {
 });
 
 app.get("/showComments", function(req, res) {
-  connection.query("SELECT CommentId FROM Comment WHERE Comment.Post = " + req.param("PostId") + ";", function(err, results) {
+  connection.query("SELECT CommentId FROM Comment WHERE Comment.Post = " + req.query.PostId + ";", function(err, results) {
     if (err) {
       return res.json( { err: err });
     }
@@ -229,7 +229,7 @@ app.get("/showComments", function(req, res) {
 });
 
 app.get("/displayPage", function(req, res) {
-  connection.query("SELECT * FROM Page WHERE Page.PageId = " + req.param("PageId") + ";", function(err, results) {
+  connection.query("SELECT * FROM Page WHERE Page.PageId = " + req.query.PageId + ";", function(err, results) {
     if (err) {
       return res.json( { err: err } );
     } else {
@@ -243,7 +243,7 @@ app.get("/displayMessage", function(req, res) {
                     "Sender.UserId as senderId, Sender.FirstName as senderFirst, Sender.LastName as senderLast, " +
                     "Receiver.UserId as receiverId, Receiver.FirstName as receiverFirst, Receiver.LastName as receiverLast " +
                     "FROM Message, User Sender, User Receiver " +
-                    "WHERE Message.MessageId = " + req.param("MessageId") +
+                    "WHERE Message.MessageId = " + req.query.MessageId + 
                     " AND Message.Sender = Sender.UserId AND Message.Receiver = Receiver.UserId";
 
   connection.query(querystring, function(err, results) {
@@ -281,7 +281,7 @@ app.get("/displayMessage", function(req, res) {
 });
 
 app.get("/receivedMessages", function(req, res) {
-  var querystring = "SELECT MessageId FROM Message WHERE Message.Receiver = " + req.param("UserId") + ";";
+  var querystring = "SELECT MessageId FROM Message WHERE Message.Receiver = " + req.query.UserId + ";";
   connection.query(querystring, function(err, results) {
     if (err) {
       return res.json({err:err});
@@ -298,7 +298,7 @@ app.get("/receivedMessages", function(req, res) {
 });
 
 app.get("/sentMessages", function(req, res) {
-  var querystring = "SELECT MessageId FROM Message WHERE Message.Sender = " + req.param("UserId") + ";";
+  var querystring = "SELECT MessageId FROM Message WHERE Message.Sender = " + req.query.UserId + ";";
   connection.query(querystring, function(err, results) {
     if (err) {
       return res.json({err:err});
@@ -311,6 +311,23 @@ app.get("/sentMessages", function(req, res) {
         return res.json(messageIds);
     }
 
+  });
+});
+
+app.get("/postsByPage", function(req, res) {
+  var querystring = "SELECT PostId FROM Post WHERE Post.PageId = " + req.query.PageId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    }
+    else {
+      var postIds = [];
+      for (var i = 0; i < results.length; i++) {
+        postIds[i] = results[i].PostId;
+      }
+
+      return res.json(postIds);
+    }
   });
 });
 

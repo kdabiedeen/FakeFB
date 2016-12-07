@@ -18,7 +18,20 @@
 
 
   <style>
+    #posts {
+      background-color: #CF9;
+      border: 1px solid #aaa;
+      text-align: center;
+    }
 
+    #profile {
+      text-align: center;
+    }
+
+    .form-group {
+      margin: 20px;
+      font-size: 20px;
+    }
   </style>
 
   <script>
@@ -29,8 +42,16 @@
 
       User.DisplayUser(UserId, "profile");
 
-      Post.DisplayAllPerUser(UserId, "posts");
-    })
+      Post.DisplayAllOnPage(UserId, "posts");
+
+      //Post.DisplayAllPerUser(UserId, "posts");
+
+    });
+
+    function CreatePost () {
+      var Content = $("#Content").val();
+      Post.CreatePost(Content, UserId);
+    }
   </script>
 </head>
 <body>
@@ -53,6 +74,20 @@
 
   <div id="profile"></div>
 
-  <div id="posts"></div>
+  <div id="posts">
+    <h2>Posts:</h2>
+
+  </div>
+
+  <div class="form-group">
+  <form>
+    <fieldset>
+      <label for="content">New Post:</label>
+      <textarea class="form-control" id="Content" name="Content"></textarea>
+      <button type="button" onclick="CreatePost()" class="btn btn-primary btn-md custom">Post</button>
+    </fieldset>
+  </form>
+</div>
+
 </body>
 </html>

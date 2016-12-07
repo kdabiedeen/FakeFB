@@ -1,6 +1,6 @@
 var Post = {
 
-	/* Creates a post with the following argumets:
+	/* Creates a post with the following arguments:
 		PostId
 		Date
 		Content
@@ -73,6 +73,19 @@ var Post = {
 			return;
 
 		$.get("/displayAllPosts", {"UserId": UserId}, function(data) {
+			var postIds = data;
+
+			for (var i = 0; i < postIds.length; i++) {
+				Post.DisplayPost(postIds[i], element_id);
+			}
+		});
+	},
+
+	DisplayPostByPage : function(PageId, element_id) {
+		if (!PageId || !element_id)
+			return;
+
+		$.get("/postsByPage", {"PageId" : PageId}, function(data) {
 			var postIds = data;
 
 			for (var i = 0; i < postIds.length; i++) {
