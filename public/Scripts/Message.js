@@ -1,12 +1,4 @@
-$(function() {
-	Message.init();
-});
-
 var Message = {
-
-	init : function () {
-		$("head").append("<link rel='stylesheet' type='text/css' href='./Styles/tools.css' />");
-	},
 
 	/* Creates a message with the following argumets:
 		MessageId
@@ -24,56 +16,68 @@ var Message = {
 		if (!MessageId || !element_id) 
 			return;
 
-		// Get info from database
-		// For now, I'll hardcode it
+		$.get("/displayMessage", {"MessageId" : MessageId}, function(data) {
+			var message = data.message;
+			var sender = data.sender;
+			var receiver = data.receiver;
 
-		var message = {
-			MessageId: MessageId,
-			Date: "12-4-2016",
-			Content: "Hey, what's up?",
-			Sender: 1,
-			Receiver: 2,
-		}
+			// Div message
+			var messageDiv = $("<div></div>").addClass("message").attr("id", "message_" + MessageId).appendTo($("#" + element_id));
 
-		// Get name of sender
-		var sender = {
-			UserId: message.Sender,
-			FirstName: "Brandon",
-			LastName: "Cuadrado"
-		}
+			// Div message_header
+			var messageHeader = $("<div></div>").addClass("message_header").appendTo(messageDiv);
 
-		// Get name of receiver
-		var receiver = {
-			UserId: message.Receiver,
-			FirstName: "Kevin",
-			LastName: "Dabiedeen"
-		}
+			// Message name
+			$("<div></div>").addClass("message_name").text(sender.FirstName + " " + sender.LastName).appendTo(messageHeader);
 
-		// Div message
-		var messageDiv = $("<div></div>").addClass("message").attr("id", "message_" + MessageId).appendTo($("#" + element_id));
+			// Div message_body
+			var messageBody = $("<div></div>").addClass("message_body").appendTo(messageDiv);
 
-		// Div message_header
-		var messageHeader = $("<div></div>").addClass("message_header").appendTo(messageDiv);
+			// Message content
+			$("<div></div>").addClass("message_content").text(message.Content).appendTo(messageBody);
 
-		// Message name
-		$("<div></div>").addClass("message_name").text(sender.FirstName + " " + sender.LastName).appendTo(messageHeader);
+			// Message Footer
+			var messageFooter = $("<div></div>").addClass("message_footer").appendTo(messageDiv);
 
-		// Div message_body
-		var messageBody = $("<div></div>").addClass("message_body").appendTo(messageDiv);
+			// Message date
+			$("<div></div>").addClass("message_date").text(message.Date).appendTo(messageFooter);
 
-		// Message content
-		$("<div></div>").addClass("message_content").text(message.Content).appendTo(messageBody);
-
-		// Message Footer
-		var messageFooter = $("<div></div>").addClass("message_footer").appendTo(messageDiv);
-
-		// Message date
-		$("<div></div>").addClass("message_date").text(message.Date).appendTo(messageFooter);
+		});
 
 
 	},
 
 	/* Transactions */
+
+	GetAllReceived : function(UserId, element_id) {
+		if (!UserId || !element_id)
+			return;
+
+		$.get("/receivedMessages", {"UserId" : UserId}, function(data) {
+			if (data.length == 0) {
+				$("#" + element_id).text("No messages");
+			}
+
+			for (var i = 0; i < data.length; i++) {
+				Message.DisplayMessage(data[i], element_id);
+			}
+		});
+	},
+
+	GetAllSent : function(UserId, element_id) {
+		if (!UserId || !element_id)
+			return;
+
+		$.get("/sentMessages", {"UserId" : UserId}, function(data) {
+			if (data.length == 0) {
+				$("#" + element_id).text("No messages");
+			}
+
+			for (var i = 0; i < data.length; i++) {
+				Message.DisplayMessage(data[i], element_id);
+			}
+		});
+	},
 }
 
 

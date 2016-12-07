@@ -7,52 +7,39 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="tools.css">
+  <style type="text/css">
+      #group_name {
+    	text-align: center;
+    }
+      #posts {
+    	background-color: #0FF;
+    	border: medium solid #000;
+    	text-align: center;
+    }
+  </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="../Scripts/User.js"></script>
-  <script src="../Scripts/Post.js"></script>
-  <script src="../Scripts/Comment.js"></script>
-  <script src="../Scripts/Page.js"></script>
-  <script src="../Scripts/jquery-3.1.0.min.js"></script>
-
-
-
-  <style>
-
-  </style>
-
-  <script>
-    $(function() {
-      var UserId = localStorage.getItem("id");
-
-      Page.DisplayPage(UserId, "pageHeader");
-
-      User.DisplayUser(UserId, "profile");
-
-      Post.DisplayAllPerUser(UserId, "posts");
-    })
-  </script>
 </head>
-<body>
+<body class="panel-default">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Not Facebook</a>
+        <a class="navbar-brand" href="#">Inner Circle</a>
       </div>
       <ul class="nav navbar-nav">
         <li><a href="./main.html">News Feed</a></li>
-        <li class="active"><a href="./personalpage.html">Personal Page</a></li>
+        <li><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="./messages.html">Messages</a></li>
-        <li><a href="./group.html">Groups</a></li>
+        <li class="active"><a href="#">Groups</a></li>
         <li><a href="./login.html">Logout</a></li>
       </ul>
     </div>
   </nav>
-
-  <div id="pageHeader"></div>
-
-  <div id="profile"></div>
-
-  <div id="posts"></div>
+  <h1 id="group_name">Group Name</h1>
+<p>&nbsp;</p>
+  <div id="posts">Posts go here</div>
+  <form id="userPost">Post your thoughts: <input type="text" name="message" size=70><br>
+<input type="submit" value="Post">
+</form>
 </body>
 </html>

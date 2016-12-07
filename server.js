@@ -32,9 +32,8 @@ var middleWare = (bodyParser.urlencoded({
 app.use(express.static(__dirname + '/public'));
 
 app.get('/login', function(req,res){
-  console.log(req.param("username"));
-  console.log(req.param("password"));
-  connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("username") + ";", function(err, results) {
+  console.log(req.param("id"));
+  connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("id") + ";", function(err, results) {
     if (err) {
       return res.json({ message: "ERROR" });
     } else {
@@ -63,10 +62,37 @@ app.get('/login', function(req,res){
   })
 });
 
-/*
-app.post('/logIn', middleWare, function(req, res) {
-  console.log(req.body.username);
-  console.log(req.body.password);
+app.post('/signUp', function(req, res) {
+  // get the userId, then insert
+  var querystring1 = "SELECT MAX(UserId) FROM User";
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      return res.json({message:"ERROR"});
+    } else {
+      var UserId = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      var querystring2 = "INSERT INTO User (UserId, LastName, FirstName, Address, City, State, ZipCode, Telephone, Email, AcctNum, Created, CreditCard, Preferences, Rating) " +
+                        "VALUES (" + UserId + ", '" + req.param("LastName") +"', '" + req.param("FirstName") + "', '" +
+                        req.param("Address") + "', '" + req.param("City") + "', '" + req.param("State") + "', " + 
+                        req.param("ZipCode") + ", '" + req.param("Telephone") + "', '" + req.param("Email") + "', " +
+                        req.param("AcctNum") + ", '" + dateString +"', " + req.param("CreditCard") + ", '" + req.param("Preferences") + "', 0);"
+      connection.query(querystring2, function(err, results) {
+        if (err) {
+          return res.json( { message:"ERROR"});
+        } else {
+          var querystring3 = "SELECT * FROM User WHERE User.UserId = " + UserId + ";";
+          connection.query(querystring3, function(err, results) {
+            if (err) {
+              return res.json( { message: "ERROR"});
+            } else {
+              return res.json(results[0]);
+            }
+          })
+        }
+      })
+    }
+  });
 
   var loggedIn = 0;
 
@@ -74,35 +100,8 @@ app.post('/logIn', middleWare, function(req, res) {
     return res.redirect('./main.html');
   else
     return res.redirect('./login.html');
-  /*
-	connection.query('SELECT * FROM User', function(err, results){
-    if(err){
-      console.log("Error");
-    } else {
-      console.log(results.length);
-
-      for(var i = 0; i < results.length; i++){
-        //console.log(results[i]);
-      }
-
-      //EXAMPLE HOW TO SIGN UP A USER
-      var s = 'INSERT INTO User (UserId, LastName, FirstName, Address, City, State, ZipCode, Telephone, Email, AcctNum, Created, CreditCard, Preferences, Rating)' +
-          'VALUES (12, \'Dabiedeen\', \'Kevin\', \'5 Elmd Lane\', \'Stony VBrook\', \'NY\', 11790, \'6311234567\', \'brancuad2@gmail.com\', 132425462, \'2016-11-4\', 132425462, \'\', 0);'
-      connection.query(s, function(err, results){
-        if(err){
-          console.log("Error");
-          console.log(err)
-        } else {
-          console.log("Success");
-        }
-
-    	});
-
-    }
-	});
 
 });
-*/
 
 app.get("/displayUser", function(req, res) {
   connection.query("SELECT * FROM User WHERE User.UserId = " + req.param("UserId") + ";", function(err, results) {
@@ -235,6 +234,82 @@ app.get("/displayPage", function(req, res) {
     } else {
       return res.json(results[0]);
     }
+  });
+});
+
+app.get("/displayMessage", function(req, res) {
+  var querystring = "SELECT Message.MessageId, Message.Date, Message.Content, " +
+                    "Sender.UserId as senderId, Sender.FirstName as senderFirst, Sender.LastName as senderLast, " +
+                    "Receiver.UserId as receiverId, Receiver.FirstName as receiverFirst, Receiver.LastName as receiverLast " +
+                    "FROM Message, User Sender, User Receiver " +
+                    "WHERE Message.MessageId = " + req.param("MessageId") + 
+                    " AND Message.Sender = Sender.UserId AND Message.Receiver = Receiver.UserId";
+
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json( {err:err});
+    } else {
+      var message = results[0];
+      var sender = results[0];
+      var receiver = results[0];
+
+      var data = {
+        message : {
+          MessageId: message.MessageId,
+          Date: message.Date,
+          Content: message.Content,
+          Sender: message.senderId,
+          Receiver: message.receiverId
+        },
+        sender: {
+          UserId: sender.senderId,
+          FirstName: sender.senderFirst,
+          LastName: sender.senderLast
+        },
+        receiver: {
+          UserId: receiver.receiverId,
+          FirstName: receiver.receiverFirst,
+          LastName: receiver.receiverLast,
+        }
+      }
+
+      return res.json(data);
+
+    }
+  });
+});
+
+app.get("/receivedMessages", function(req, res) {
+  var querystring = "SELECT MessageId FROM Message WHERE Message.Receiver = " + req.param("UserId") + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].MessageId;
+        }
+
+        return res.json(messageIds);
+    }
+
+  });
+});
+
+app.get("/sentMessages", function(req, res) {
+  var querystring = "SELECT MessageId FROM Message WHERE Message.Sender = " + req.param("UserId") + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].MessageId;
+        }
+
+        return res.json(messageIds);
+    }
+
   });
 });
 
