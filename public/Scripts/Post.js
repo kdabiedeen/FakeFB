@@ -19,7 +19,7 @@ var Post = {
 			// post to page
 			var PageId = args.PageId;
 
-			$.post("/createPostOnPage", {"Content" : Content, "PageId" : PageId, "Poster": UserId}, function(data) {
+			$.get("/createPostOnPage", {"Content" : Content, "PageId" : PageId, "Poster": UserId}, function(data) {
 				window.location.reload();
 			});
 		}

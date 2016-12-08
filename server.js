@@ -342,7 +342,7 @@ app.get("/postsByPage", function(req, res) {
   });
 });
 
-app.post("/createPostOnPage", function(req, res) {
+app.get("/createPostOnPage", function(req, res) {
   var querystring1 = "SELECT MAX(PostId) as max FROM Post;";
   var max = -1;
 
