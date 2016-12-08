@@ -53,6 +53,8 @@ function start(){
 function logout(){
   console.log("run logout");
   localStorage.removeItem("FirstName");
+  localStorage.removeItem("LastName");
+  localStorage.removeItem("id");
   location.reload()
 
   return 1;

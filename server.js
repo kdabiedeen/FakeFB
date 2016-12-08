@@ -81,7 +81,7 @@ app.get('/signUp', function(req, res) {
                         "VALUES (" + (max + 1) + ",\'" + req.param("LastName") + "\',\'"  + req.param("FirstName") + "\',\'" +
                         req.param("Address") + "\',\'"  + req.param("City") + "\',\'"  + req.param("State") + "\',"  +
                         req.param("ZipCode") + ","  + req.param("Telephone") + ",\'"  + req.param("Email") + "\',"  +
-                        req.param("AcctNum") + ",\'"  + dateString + "\',"  + req.param("CreditCard") + ","  + req.param("Preferences") + ",0);";
+                        req.param("AcctNum") + ",\'"  + dateString + "\',"  + req.param("CreditCard") + ",\'"  + req.param("Preferences") + "\',0);";
     console.log(querystring2);
     connection.query(querystring2, function(err, results) {
         if (err) {
