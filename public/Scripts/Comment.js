@@ -9,7 +9,7 @@ var Comment = {
 		
 	*/
 	CreateComment : function (args) {
-	
+		
 	},
 
 	DisplayComment : function(CommentId, element_id) {
@@ -25,6 +25,11 @@ var Comment = {
 
 			// Div comment_header
 			var commentHeader = $("<div></div>").addClass("comment_header").appendTo(commentDiv);
+
+			$("<a></a>").addClass("comment_delete").val(CommentId).text("x")
+				.click(function() {
+					Comment.DeleteComment($(this).val());
+				}).appendTo(commentHeader);
 
 			// Comment name
 			$("<div></div>").addClass("comment_name").text(user.FirstName + " " + user.LastName).appendTo(commentHeader);
@@ -73,6 +78,19 @@ var Comment = {
 			return;
 
 		$.get("/unlikeComment", {"CommentId" : CommentId}, function(data) {
+			window.location.reload();
+		});
+	},
+
+	DeleteComment : function(CommentId) {
+		if(!CommentId)
+			return;
+
+		var del = confirm("Would you like to delete this comment?");
+		if (!del)
+			return;
+
+		$.get("/deleteComment", {"CommentId": CommentId}, function(data) {
 			window.location.reload();
 		});
 	},
