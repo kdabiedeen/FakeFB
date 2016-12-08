@@ -356,9 +356,9 @@ app.get("/createPostOnPage", function(req, res) {
       var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
       max = results[0].max;
     }
-    var querystring2 = "INSERT INTO Post (PostId, Date, Content, CommentCount, Poster, PageId) " +
+    var querystring2 = "INSERT INTO Post (PostId, Date, Content, CommentCount, Poster, PageId, LikeCount) " +
                         "VALUES (" + (max + 1) + ",\'" + dateString + "\',\'"  + req.query.Content + "\'," +
-                        "0, "  + req.query.Poster + ", "  + req.query.PageId + ");";
+                        "0, "  + req.query.Poster + ", "  + req.query.PageId + ", 0);";
     connection.query(querystring2, function(err, results) {
         if (err) {
           console.log(err);
@@ -424,19 +424,20 @@ app.get("/deleteMessage", function(req, res) {
 });
 
 app.get("/likePost", function(req, res) {
-  var querystring = "UPDATE Post SET LikeCount = LikeCount + 1 WHERE PostId =" + req.query.PostId + ";"
+  var querystring = "UPDATE Post SET LikeCount = LikeCount + 1 WHERE PostId = " + req.query.PostId + ";"
   connection.query(querystring, function(err, results) {
     if (err) {
       console.log(err);
       return res.json({message : "ERROR"});
     } else {
+      console.log(querystring);
       return res.json({message : "SUCCESS"});
     }
   });
 });
 
 app.get("/unlikePost", function(req, res) {
-  var querystring = "UPDATE Post SET LikeCount = LikeCount - 1 WHERE PostId =" + req.query.PostId + ";"
+  var querystring = "UPDATE Post SET LikeCount = LikeCount - 1 WHERE PostId = " + req.query.PostId + ";"
   connection.query(querystring, function(err, results) {
     if (err) {
       console.log(err);
@@ -626,7 +627,33 @@ app.get("/mailingList", function(req, res) {
   });
 });
 
+app.get("/deletePost", function(req, res) {
+  var querystring = "DELETE FROM Post WHERE PostId = " + req.query.PostId + ";";
+  connection.query(querystring, function(err, results) {
+    if(err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
+app.get("/deleteComment", function(req, res) {
+  var querystring = "DELETE FROM Comment WHERE CommentId = " + req.query.CommentId + ";";
+  connection.query(querystring, function(err, results) {
+    if(err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);
 });
+
+//# sourceURL=server.js

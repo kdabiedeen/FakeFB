@@ -101,6 +101,16 @@
 	cursor: pointer;
 }
 
+.post_delete {
+	color:red;
+	font-size:16px;
+	float:right;
+}
+
+.post_delete:hover {
+	cursor:pointer;
+}
+
 /* Group Styling */
 .group {
 	width: 500px;
@@ -219,6 +229,16 @@
 }
 
 .comment_minus:hover {
+	cursor:pointer;
+}
+
+.comment_delete {
+	color:red;
+	font-size:16px;
+	float:right;
+}
+
+.comment_delete:hover {
 	cursor:pointer;
 }
 

@@ -48,6 +48,11 @@ var Post = {
 			// Div post_header
 			var postHeader = $("<div></div>").addClass("post_header").appendTo(postDiv);
 
+			$("<a></a>").addClass("post_delete").val(PostId).text("x")
+				.click(function() {
+					Post.DeletePost($(this).val());
+				}).appendTo(postHeader);
+
 			// Post name
 			$("<div></div>").addClass("post_name").text(user.FirstName + " " + user.LastName).appendTo(postHeader);
 
@@ -68,14 +73,14 @@ var Post = {
 
 			var postLikes = $("<div></div>").addClass("post_likes").val(PostId).text(post.LikeCount + " likes").appendTo(postFooter);
 
-			$("<a></a>").addClass("post_plus").val(PostId).text("+").appendTo(postLikes);
-			$("<a></a>").addClass("post_minus").val(PostId).text("-").appendTo(postLikes);
+			var postPlus = $("<a></a>").addClass("post_plus").val(PostId).text("+").appendTo(postLikes);
+			var postMinus = $("<a></a>").addClass("post_minus").val(PostId).text("-").appendTo(postLikes);
 			
-			$(".post_plus").unbind().click(function(){
+			$(postPlus).click(function(){
 				Post.LikePost($(this).val());
 			});
 
-			$(".post_minus").unbind().click(function(){
+			$(postMinus).click(function(){
 				Post.UnlikePost($(this).val());
 			});
 
@@ -135,8 +140,17 @@ var Post = {
 		});
 	},
 
-	CommentOnPost : function(PostId, Content, UserId) {
+	DeletePost : function(PostId) {
+		if(!PostId)
+			return;
 
+		var del = confirm("Would you like to delete this post?");
+		if (!del)
+			return;
+
+		$.get("/deletePost", {"PostId": PostId}, function(data) {
+			window.location.reload();
+		});
 	},
 
 	ShowComments: function(PostId) {
