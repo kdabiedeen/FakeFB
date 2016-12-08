@@ -75,6 +75,24 @@
 	float: left;
 }
 
+.post_plus {
+	color: green;
+	margin: 0 5px;
+}
+
+.post_plus:hover {
+	cursor:pointer;
+}
+
+.post_minus {
+	color: red;
+	margin: 0 5px;
+}
+
+.post_minus:hover {
+	cursor:pointer;
+}
+
 .post_comments {
 	float: right;
 }
@@ -184,6 +202,24 @@
 
 .comment_likes {
 	float: left;
+}
+
+.comment_plus {
+	color: green;
+	margin: 0 5px;
+}
+
+.comment_plus:hover {
+	cursor:pointer;
+}
+
+.comment_minus {
+	color: red;
+	margin: 0 5px;
+}
+
+.comment_minus:hover {
+	cursor:pointer;
 }
 
 /* Message Styling */

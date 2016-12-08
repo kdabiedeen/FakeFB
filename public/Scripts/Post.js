@@ -66,12 +66,23 @@ var Post = {
 			if (!post.LikeCount)
 				post.LikeCount = 0;
 
-			$("<div></div>").addClass("post_likes").text(post.LikeCount + " likes").appendTo(postFooter);
+			var postLikes = $("<div></div>").addClass("post_likes").val(PostId).text(post.LikeCount + " likes").appendTo(postFooter);
 
-			$("<a></a>").addClass("post_comments").text(post.CommentCount + " comments").appendTo(postFooter);
+			$("<a></a>").addClass("post_plus").val(PostId).text("+").appendTo(postLikes);
+			$("<a></a>").addClass("post_minus").val(PostId).text("-").appendTo(postLikes);
+			
+			$(".post_plus").unbind().click(function(){
+				Post.LikePost($(this).val());
+			});
 
-			$(".post_comments").click(function() {
-				Post.ShowComments(post.PostId, element_id);
+			$(".post_minus").unbind().click(function(){
+				Post.UnlikePost($(this).val());
+			});
+
+			$("<a></a>").addClass("post_comments").val(PostId).text(post.CommentCount + " comments").appendTo(postFooter);
+
+			$(".post_comments").unbind().click(function() {
+				Post.ShowComments($(this).val(), element_id);
 			});
 		});
 
@@ -107,21 +118,50 @@ var Post = {
 	},
 
 	LikePost : function(PostId) {
+		if (!PostId) 
+			return;
 
+		$.get("/likePost", {"PostId" : PostId}, function(data) {
+			window.location.reload();
+		});
+	},
+
+	UnlikePost : function(PostId) {
+		if (!PostId) 
+			return;
+
+		$.get("/unlikePost", {"PostId" : PostId}, function(data) {
+			window.location.reload();
+		});
 	},
 
 	CommentOnPost : function(PostId, Content, UserId) {
 
 	},
 
-	ShowComments: function(PostId, element_id) {
-		if (!PostId || !element_id)
+	ShowComments: function(PostId) {
+		if (!PostId)
 			return;
+
+		var overlay = $("<div></div>").addClass("overlay").appendTo("body");
+		var innerOverlay = $("<div></div>").addClass("innerOverlay")
+						.attr("id", "postOverlay_" + PostId).appendTo(overlay);
+		var header = $("<h3></h3>").text("Comments:").appendTo(innerOverlay);
+		$("<a></a>").text("x").click(function() {
+			overlay.remove();
+		}).appendTo(header).css({
+			"color":"red",
+			"cursor":"pointer",
+			"float":"right",
+			"font-size":"16px"
+		});
 
 		$.get("/showComments", {"PostId" : PostId}, function(data) {
 			for (var i = 0; i < data.length; i++) {
-				Comment.DisplayComment(data.CommentId, element_id);
+				Comment.DisplayComment(data[i], "postOverlay_" + PostId);
 			}
+
+			overlay.show();
 		});
 	}
 }

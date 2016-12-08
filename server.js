@@ -423,6 +423,54 @@ app.get("/deleteMessage", function(req, res) {
   });
 });
 
+app.get("/likePost", function(req, res) {
+  var querystring = "UPDATE Post SET LikeCount = LikeCount + 1 WHERE PostId =" + req.query.PostId + ";"
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
+app.get("/unlikePost", function(req, res) {
+  var querystring = "UPDATE Post SET LikeCount = LikeCount - 1 WHERE PostId =" + req.query.PostId + ";"
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
+app.get("/likeComment", function(req, res) {
+  var querystring = "UPDATE Comment SET LikeCount = LikeCount + 1 WHERE CommentId =" + req.query.CommentId + ";"
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
+app.get("/unlikeComment", function(req, res) {
+  var querystring = "UPDATE Comment SET LikeCount = LikeCount - 1 WHERE CommentId =" + req.query.CommentId + ";"
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);

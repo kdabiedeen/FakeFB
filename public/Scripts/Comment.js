@@ -41,13 +41,41 @@ var Comment = {
 			// Comment Footer
 			var commentFooter = $("<div></div>").addClass("comment_footer").appendTo(commentDiv);
 
-			$("<div></div>").addClass("comment_likes").text(comment.LikeCount + " likes").appendTo(commentFooter);
+			var commentLikes = $("<div></div>").addClass("comment_likes").val(CommentId).text(comment.LikeCount + " likes").appendTo(commentFooter);
+
+			$("<a></a>").addClass("comment_plus").val(CommentId).text("+").appendTo(commentLikes);
+			$("<a></a>").addClass("comment_minus").val(CommentId).text("-").appendTo(commentLikes);
+			
+			$(".comment_plus").unbind().click(function(){
+				Comment.LikeComment($(this).val());
+			});
+
+			$(".comment_minus").unbind().click(function(){
+				Comment.UnlikeComment($(this).val());
+			});
 
 		});
 
 	},
 
 	/* Transactions */
+	LikeComment : function(CommentId) {
+		if (!CommentId) 
+			return;
+
+		$.get("/likeComment", {"CommentId" : CommentId}, function(data) {
+			window.location.reload();
+		});
+	},
+
+	UnlikeComment : function(CommentId) {
+		if (!CommentId) 
+			return;
+
+		$.get("/unlikeComment", {"CommentId" : CommentId}, function(data) {
+			window.location.reload();
+		});
+	},
 }
 
 
