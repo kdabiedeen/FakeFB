@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+.dropbtn {
+    background-color: #000000;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fffffa;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #fff111
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #000000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#Input {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#Employees {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#Employees li a {
+  border: 1px solid #ddd;
+  margin-top: -1px; 
+  background-color: #f6f6f6;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  color: black;
+  display: block
+}
+
+#Employees li a.header {
+  background-color: #e2e2e2;
+  cursor: default;
+}
+
+#Employees li a:hover:not(.header) {
+  background-color: #eee;
+}
+</style>
+  <title>Manager</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+function searchableList() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("Input");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("Employees");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+//manager transaction functions
+function displayOptions(){
+	
+}
+
+function addEmployee(){
+	
+}
+
+function monthly(){
+	
+}
+
+function allAdvertItems(){
+	
+}
+
+function transactionByItem(){
+	
+}
+
+function transactionByUser(){
+
+}
+
+function revByItem(){
+
+}
+
+function revByItemType(){
+
+}
+
+function revByUser(){
+
+}
+
+function topSalesman(){
+
+}
+
+function mostActive(){
+
+}
+
+function customersWhoBought(){
+
+}
+
+function companyCatalog(){
+
+}
+
+</script>
+
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Inner Circle</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="#">News Feed</a></li>
+        <li><a href="#">Personal Page</a></li>
+        <li><a href="#">Messages</a></li>
+        <li><a href="#">Groups</a></li>
+	<li class="active"><a href="#">Manage</a></li>
+      </ul>
+    </div>
+  </nav>
+<div class="dropdown">
+  <button class="dropbtn">Manager Tools</button>
+  <div class="dropdown-content">
+    <a onclick="addEmployee()">Add employee</a>
+    <a onclick="monthly()">Monthly sales report</a>
+    <a onclick="allAdvertItems()">All advertised items</a>
+    <a onclick="transactionByItem()">Transactions by item</a>
+    <a onclick="transactionByUser()">Transactions by user name</a>
+    <a onclick="revByItem()">Revenue by item</a>
+    <a onclick="revByItemType()">Revenue by item type</a>
+    <a onclick="revByUser()">Revenue by user</a>
+    <a onclick="topSalesman()">Top Salesman</a>
+    <a onclick="mostActive()">Most active items</a>
+    <a onclick="customersWhoBought()">Customers by item bought</a>
+    <a onclick="companyCatalog()">Get List of items from a company</a>
+  </div>
+</div>
+<h1>Employees</h1>
+<input type="text" id="Input" onkeyup="searchableList()" placeholder="Search for employees..." title="Type in a name">
+
+<ul id="Employees">
+  <li><a onclick="displayOptions()">Tony</a></li>
+  <li><a onclick="displayOptions()">Agnes</a></li>
+  <li><a onclick="displayOptions()">Billy</a></li>
+  <li><a onclick="displayOptions()">Rob</a></li>
+  <li><a onclick="displayOptions()">Calvin</a></li>
+  <li><a onclick="displayOptions()">Tina</a></li>
+  <li><a onclick="displayOptions()">Cindy</a></li>
+  <li><a onclick="displayOptions()">Donald</a></li>
+  <li><a onclick="displayOptions()">Gene</a></li>
+  <li><a onclick="displayOptions()">Kyle</a></li>
+  <li><a onclick="displayOptions()">Chet</a></li>
+  <li><a onclick="displayOptions()">Mark</a></li>
+  <li><a onclick="displayOptions()">Paul</a></li>
+  <li><a onclick="displayOptions()">Steve</a></li>
+  <li><a onclick="displayOptions()">Mike</a></li>
+  <li><a onclick="displayOptions()">Karl</a></li>
+</ul>
+</body>
+</html>
