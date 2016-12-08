@@ -15,7 +15,7 @@
     console.log(localStorage.getItem("id"));
   </script>
 </head>
-<body>
+<body onload="start()">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -26,12 +26,36 @@
         <li><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="./messages.html">Messages</a></li>
         <li><a href="./group.html">Groups</a></li>
-        <li><a href="./login.html">Logout</a></li>
+        <li onclick="logout()"><a>Logout</a></li>
+        <li><a href="./advertisements.html">Advertisements</a></li>
       </ul>
     </div>
   </nav>
+  <label id="welcomebanner"> </label>
 
 
   <div id="feed"></div>
 </body>
 </html>
+
+<script>
+function start(){
+  console.log("localstorage")
+  console.log(localStorage.getItem("FirstName"));
+  if(localStorage.getItem("FirstName") == null){
+    window.location.replace("./login.html");
+  } else {
+    document.getElementById('welcomebanner').innerHTML = "Welcome " + localStorage.getItem("FirstName") + "!";
+  }
+  return 1;
+}
+
+function logout(){
+  console.log("run logout");
+  localStorage.removeItem("FirstName");
+  location.reload()
+
+  return 1;
+//  href="./login.html"
+}
+</script>
