@@ -471,6 +471,161 @@ app.get("/unlikeComment", function(req, res) {
   });
 });
 
+app.get("/createAd", function(req, res) {
+  var querystring1 = "SELECT MAX(AdId) as max FROM Advertisement;";
+  var max = -1;
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      max = results[0].max;
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      var querystring2 = "INSERT INTO Advertisement (AdId, EmployeeId, Type, Date, Company, ItemName, Content, UnitPrice, NumUnits) " +
+                          "VALUES (" + (max + 1) + "," + req.param("EmployeeId") + ",\'"  + req.param("Type") + "\',\'" +
+                          dateString + "\',\'"  + req.param("Company") + "\',\'"  + req.param("ItemName") + "\',\'"  +
+                          req.param("Content") + "\',"  + req.param("UnitPrice") + ","  + req.param("NumUnits") + ");";
+      console.log(querystring1);
+      connection.query(querystring2, function(err, results) {
+        if(err){
+          console.log(err);
+          return res.json({message:"ERROR"});
+        } else {
+          return res.json({message:"SUCCESS"});
+        }
+      });
+    }
+  });
+});
+
+app.get("/isEmployee", function(req, res) {
+    console.log("PRINT THIS " + req.param("UserId"));
+    var querystring1 = "SELECT * FROM Employee WHERE Employee.UserId = " + req.param("UserId") + ";";
+    connection.query(querystring1, function(err, results) {
+      if(err){
+        console.log("ERROR HERE 343");
+        console.log(err);
+        return res.json({message:"ERROR"});
+      } else {
+        if(results.length == 0)
+          return res.json({message: "EMPTY"});
+         else
+          return res.json({message:"SUCCESS", SSN: results[0].SSN});
+      }
+    });
+});
+
+app.get("/executeDeleteAd", function(req, res) {
+  console.log(req.param("AdId"));
+  var querystring = "DELETE FROM Sale WHERE Sale.AdId = " + req.param("AdId") + ";";
+  connection.query(querystring, function(err, results) {
+    if(err){
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var querystring = "DELETE FROM Advertisement WHERE Advertisement.AdId = " + req.param("AdId") + ";";
+      connection.query(querystring, function(err, results) {
+        if(err){
+          console.log(err);
+          return res.json({message:"ERROR"});
+        } else {
+          return res.json({message:"SUCCESS"});
+        }
+      });
+    }
+  });
+});
+
+app.get("/deleteAd", function(req, res) {
+  var querystring = "SELECT * FROM Advertisement WHERE Advertisement.EmployeeId = " + req.param("SSN") + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].AdId + " " + results[i].Company + " " + results[i].ItemName;
+        }
+
+        return res.json(messageIds);
+    }
+
+  });
+});
+
+app.get("/collectAds", function(req, res) {
+  var querystring = "SELECT * FROM Advertisement;";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].AdId + " " + results[i].Company + " " + results[i].ItemName;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/recordTrans", function(req, res) {
+  var querystring1 = "SELECT MAX(TransId) as max FROM Sale;";
+  var max = -1;
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+  max = results[0].max;
+  var dateString = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  var querystring = "INSERT INTO Sale(TransId, UserId, Timestamp, AdId, NumUnits, AcctNum) VALUES(" + (max + 1) + "," + req.param("UserId") + ",\'" + dateString + "\'," + req.param("AdId") + "," + req.param("numUnits") + "," + req.param("acctNum") + ");";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else {
+      return res.json({message: 'SUCCESS'});
+    }
+  });
+  }
+});
+});
+
+app.get("/suggest", function(req, res) {
+  var querystring = "SELECT ItemName From (" +
+"SELECT Distinct Type From Advertisement A WHERE EXISTS(SELECT * FROM Sale S WHERE S.UserId = " + req.param("UserId") + " AND A.AdId = S.AdId)" +
+") AS B, Advertisement A WHERE A.Type = B.Type;";
+console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].ItemName;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/mailingList", function(req, res) {
+  var querystring = "SELECT UserId, LastName, FirstName, Email FROM User U WHERE EXISTS(SELECT * FROM Sale S WHERE U.UserId = S.UserId);";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].UserId + " " + results[i].LastName + ", " + results[i].FirstName + " " + results[i].Email;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);

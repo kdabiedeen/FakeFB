@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tools.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="../Scripts/User.js"></script>
+  <script src="../Scripts/Post.js"></script>
+  <script src="../Scripts/Comment.js"></script>
+  <script src="../Scripts/Page.js"></script>
+  <script src="../Scripts/jquery-3.1.0.min.js"></script>
+
+
+
+  <style>
+
+  </style>
+
+  <script>
+    $(function() {
+      var UserId = localStorage.getItem("id");
+
+
+      Page.DisplayPage(UserId, "pageHeader");
+
+      User.DisplayUser(UserId, "profile");
+
+      Post.DisplayAllPerUser(UserId, "posts");
+    })
+  </script>
+</head>
+<body onload="startAd()">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Not Facebook</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="./main.html">News Feed</a></li>
+        <li><a href="./personalpage.html">Personal Page</a></li>
+        <li><a href="./messages.html">Messages</a></li>
+        <li><a href="./group.html">Groups</a></li>
+        <li><a href="./login.html">Logout</a></li>
+        <li class="active"><a href="./advertisements.html">Advertisements</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <div style="margin-left: 20px;"class="form-group">
+      <h3> Create Advertisement </h3>
+      <label for="Type">Type:</label>
+      <input type="text" class="form-control" id="Type">
+      <label for="Company">Company:</label>
+      <input type="text" class="form-control" id="Company">
+      <label for="ItemName">Item Name:</label>
+      <input type="text" class="form-control" id="ItemName">
+      <label for="Content">Content:</label>
+      <input type="text" class="form-control" id="Content">
+      <label for="UnitPrice">Unit Price:</label>
+      <input type="text" class="form-control" id="UnitPrice">
+      <label for="NumUnits">Number of Units:</label>
+      <input type="text" class="form-control" id="NumUnits">
+      <button type="button" class="btn btn-primary btn-md custom" onclick="createAd();">Create</button>
+  </div>
+
+  <div id="advertismentList">
+    <h3> Delete Advertisement </h3>
+    <select id="selectAds">
+    </select>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="deleteAd();">Delete</button>
+  </div>
+
+  <div id="suggestList">
+    <h3> Produce Suggestion List </h3>
+    <input type="number" id="num1" min="0" class="form-control" id="usr" name="username">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="produceList();">Produce</button>
+    <br></br>
+    <ul id="sugList"></ul>
+  </div>
+
+  <div id="mailingList">
+    <h3> Produce Customer Mailing List </h3>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="mailingList();">Produce</button>
+    <br></br>
+    <ul id="mailList"></ul>
+  </div>
+
+</body>
+</html>
+
+<script>
+function startAd() {
+  $.get("/deleteAd", {SSN : localStorage.getItem("SSN")}, function(data) {
+    console.log(data);
+    for(var i in data){
+      var option = document.createElement("option");
+      option.text = data[i];
+      option.value = (data[i].split(" "))[0];
+      console.log(option.value);
+      var select = document.getElementById("selectAds");
+      select.appendChild(option);
+    }
+  });
+}
+
+function deleteAd(){
+    var data = $("#selectAds").val();
+    var adId = data.split(" ")[0];
+    console.log('Delete ' + adId);
+    $.get("/executeDeleteAd", {AdId : adId}, function(data) {
+        if(data.message == 'SUCCESS'){
+          alert("SUCCESS");
+        } else {
+          alert("ERROR");
+        }
+    });
+    //location.reload();
+}
+
+function createAd(){
+  var args = {
+    Type: $("#Type").val(),
+    EmployeeId: localStorage.getItem("SSN"),
+    Company: $("#Company").val(),
+    ItemName: $("#ItemName").val(),
+    Content: $("#Content").val(),
+    UnitPrice: $("#UnitPrice").val(),
+    NumUnits: $("#NumUnits").val(),
+  }
+
+  $.get("/createAd", args, function(data) {
+      alert(data.message);
+  });
+}
+
+function produceList(){
+  var userId = $("#num1").val();
+  $("#sugList").empty();
+  $.get("/suggest", {UserId : userId}, function(data) {
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode(data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("sugList").appendChild(node);
+      }
+  });
+}
+
+function mailingList(){
+  $("#mailList").empty();
+  console.log("run mailinglist");
+  $.get("/mailingList", {}, function(data) {
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode(data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("mailingList").appendChild(node);
+      }
+  });
+}
+</script>

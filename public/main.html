@@ -27,14 +27,39 @@
         <li><a href="./messages.html">Messages</a></li>
         <li><a href="./group.html">Groups</a></li>
         <li onclick="logout()"><a>Logout</a></li>
-        <li><a href="./advertisements.html">Advertisements</a></li>
+        <li id="adlink"><a href="./advertisements.html">Advertisements</a></li>
       </ul>
     </div>
   </nav>
   <label id="welcomebanner"> </label>
 
 
+  <a href="#" id="adBtn1" onclick="showDiv1()" class="btn btn-sq-lg btn-block btn-primary"><i class="fa fa-user fa-5x"></i><label id="ad1"></label></a>
+  <a href="#" id="adBtn2" onclick="showDiv2()" class="btn btn-sq-lg btn-block btn-primary"><i class="fa fa-user fa-5x"></i><label id="ad2"></label></a>
+
+  <div id="order1" class="form-group">
+    <form>
+      <fieldset>
+        <label id="label1" for="usr">Number of Units:</label>
+        <input type="number" id="num1" min="0" class="form-control" id="usr" name="username">
+        <button type="button" onclick="SubmitOrder1()" class="btn btn-primary btn-md custom">Submit Order</button>
+      </fieldset>
+    </form>
+  </div>
+
+  <div id="order2" class="form-group">
+    <form>
+      <fieldset>
+        <label id="label2" for="usr">Number of Units:</label>
+        <input type="number" id="num2" min="0" class="form-control" id="usr" name="username">
+        <button type="button" onclick="SubmitOrder2()" class="btn btn-primary btn-md custom">Submit Order</button>
+      </fieldset>
+    </form>
+  </div>
+
+
   <div id="feed"></div>
+
 </body>
 </html>
 
@@ -47,7 +72,50 @@ function start(){
   } else {
     document.getElementById('welcomebanner').innerHTML = "Welcome " + localStorage.getItem("FirstName") + "!";
   }
+
+  $.get("/isEmployee", {UserId : localStorage.getItem("id")}, function(data) {
+      if(data.message == 'EMPTY'){
+        $("#adlink").addClass("hidden");
+      } else {
+        localStorage.setItem("SSN", data.SSN);
+      }
+  });
+
+  $.get("/collectAds", {}, function(data) {
+      var a = Math.random() * (data.length - 0) + 0;
+      do {
+        b = Math.random() * (data.length - 0) + 0;
+      } while(a == b);
+
+      var i = data[Math.floor(a)];
+      var j = data[Math.floor(b)];
+
+      $("#ad1").text(i);
+      $("#ad2").text(j);
+      $("#order1").hide();
+      $("#order2").hide();
+      console.log(i);
+      console.log(j);
+  });
+
   return 1;
+}
+
+function showDiv1(){
+  $("#order1").show();
+  var data = $("#ad1").text();
+  var adId = data.split(" ")[0];
+
+  $("#label1").text("Number of Units (" + adId + ")");
+}
+
+function showDiv2(){
+  $("#order2").show();
+
+  var data = $("#ad2").text();
+  var adId = data.split(" ")[0];
+
+  $("#label2").text("Number of Units (" + adId + ")");
 }
 
 function logout(){
@@ -55,9 +123,35 @@ function logout(){
   localStorage.removeItem("FirstName");
   localStorage.removeItem("LastName");
   localStorage.removeItem("id");
+  localStorage.removeItem("Account");
   location.reload()
 
   return 1;
-//  href="./login.html"
+}
+
+function SubmitOrder1(){
+  var data = $("#ad1").text();
+  var adId = data.split(" ")[0];
+  var num = $("#num1").val();
+  console.log(data);
+  console.log(num);
+  console.log(adId);
+
+  $.get("/recordTrans", {AdId : adId, UserId : localStorage.getItem("id"), numUnits : num, acctNum : localStorage.getItem("Account")}, function(data) {
+    console.log(data);
+  });
+}
+
+function SubmitOrder2(){
+  var data = $("#ad2").text();
+  var adId = data.split(" ")[0];
+  var num = $("#num2").val();
+  console.log(data);
+  console.log(num);
+  console.log(adId);
+
+  $.get("/recordTrans", {AdId : adId, UserId : localStorage.getItem("id"), numUnits : num, acctNum : localStorage.getItem("Account")}, function(data) {
+    console.log(data);
+  });
 }
 </script>
