@@ -208,6 +208,7 @@
 .message_name {
 	font-size: 20px;
 	font-weight: bold;
+	display: inline;
 }
 
 .message_body {
@@ -225,6 +226,18 @@
 
 .message_date {
 	float:right;
+}
+
+.message_receiver {
+	float:left;
+}
+
+.message_delete, .message_delete:hover {
+	float:right;
+	color: red;
+	font-size: 12px;
+	display: inline;
+	cursor:pointer;
 }
 
 /* Advertisement Styling */

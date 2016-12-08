@@ -370,6 +370,59 @@ app.get("/createPostOnPage", function(req, res) {
     });
 });
 
+app.get("/getAllUsers", function(req, res) {
+  var querystring = "SELECT UserId, LastName, FirstName FROM User";
+  connection.query(querystring, function(err, results) {
+    if(err) {
+      console.log(err);
+      return res.json({message: "ERROR"});
+    }
+    else {
+      return res.json(results);
+    }
+  });
+});
+
+app.get("/sendMessage", function(req, res) {
+  var querystring1 = "SELECT MAX(MessageId) as max FROM Message;";
+  var max = -1;
+
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var Message = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Message (MessageId, Date, Content, Sender, Receiver) " +
+                        "VALUES (" + (max + 1) + ",\'" + dateString + "\',\'"  + req.query.Content + "\'," +
+                        req.query.Sender + ", "  + req.query.Receiver + ");";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+      })
+    });
+});
+
+app.get("/deleteMessage", function(req, res) {
+  var querystring = "DELETE FROM Message WHERE MessageId = " + req.query.MessageId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message : "ERROR"});
+    } else {
+      return res.json({message : "SUCCESS"});
+    }
+  });
+});
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);

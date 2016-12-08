@@ -92,6 +92,12 @@ var User = {
 	},
 
 	/* Transactions */
+
+	GetAllUsers : function(callback) {
+		$.get("/getAllUsers", {}, function(data) {
+			callback(data);
+		});
+	}
 }
 
 
