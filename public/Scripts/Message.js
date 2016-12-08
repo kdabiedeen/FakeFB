@@ -8,8 +8,17 @@ var Message = {
 		Receiver
 		
 	*/
-	CreateMessage : function (args) {
-	
+	SendMessage : function (args) {
+		var Content = args.Content;
+		var Sender = args.Sender;
+		var Receiver = args.Receiver;
+
+		$.get("/sendMessage", {"Content" : Content, 
+			"Sender" : Sender, 
+			"Receiver" : Receiver}, function(data) {
+				window.location.reload();
+			});
+
 	},
 
 	DisplayMessage : function(MessageId, element_id) {
@@ -30,6 +39,16 @@ var Message = {
 			// Message name
 			$("<div></div>").addClass("message_name").text(sender.FirstName + " " + sender.LastName).appendTo(messageHeader);
 
+			// Delete button
+			$("<a></a>").addClass("message_delete").val(message.MessageId).text("X").appendTo(messageHeader).click(function() {
+				var del = confirm("Delete this message?")
+				if(!del) {
+					return;
+				} else {
+					Message.DeleteMessage($(this).val());
+				}
+			});
+
 			// Div message_body
 			var messageBody = $("<div></div>").addClass("message_body").appendTo(messageDiv);
 
@@ -38,6 +57,9 @@ var Message = {
 
 			// Message Footer
 			var messageFooter = $("<div></div>").addClass("message_footer").appendTo(messageDiv);
+
+			// Message receiver
+			$("<div></div>").addClass("message_receiver").text(receiver.FirstName + " " + receiver.LastName).appendTo(messageFooter);
 
 			// Message date
 			$("<div></div>").addClass("message_date").text(message.Date).appendTo(messageFooter);
@@ -78,6 +100,16 @@ var Message = {
 			}
 		});
 	},
+
+	DeleteMessage : function(MessageId) {
+		if (!MessageId) {
+			return;
+		}
+
+		$.get("/deleteMessage", {"MessageId": MessageId}, function(data){
+			window.location.reload();
+		});
+	}
 }
 
 

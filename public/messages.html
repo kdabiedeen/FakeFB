@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="tools.css">
   <script src="../Scripts/Message.js"></script>
+  <script src="../Scripts/User.js"></script>
 
   <style type="text/css">
       #group_name {
@@ -43,25 +44,58 @@
       width: 350px;
     }
 
+    #sent .message_delete {
+      float:left;
+    }
+
     #messages {
       margin: 20px auto;
       display: inline-block;
       width: auto;
       overflow: auto;
     }
+
+    .form-group {
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+      background-color: #cf9;
+      border: 1px solid #aaa;
+    }
+
+
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
+    var UserId = localStorage.getItem("id");
     $(function() {
-      var UserId = localStorage.getItem("id");
 
       $("#userName").text(localStorage.getItem("FirstName") + " " + localStorage.getItem("LastName"));
 
       Message.GetAllReceived(UserId, "received");
       Message.GetAllSent(UserId, "sent");
+
+      User.GetAllUsers(function(users) {
+        for (var i = 0; i < users.length; i++) {
+          var user = users[i];
+          $("<option></option>").val(user.UserId).text(user.FirstName + " " + user.LastName).appendTo("#messageSelect");
+        }
+      });
       // Message.DisplayMessage(10, "messages");
     });
+
+    function SendMessage() {
+      var Content = $("#content").val();
+      var Receiver = $("#messageSelect").val();
+      if (!Receiver) {
+        alert("Please select a recipient.");
+        return;
+      }
+
+      Message.SendMessage({Content:Content, Sender: UserId, Receiver:Receiver});
+
+    }
   </script>
 </head>
 <body class="panel-default">
@@ -91,18 +125,22 @@
   </div>
   </center>
 
-<form id="sendMessage">
-  <select name="desiredUser">
-  <option value="Select user">Select user</option>
-  <option value="mike">mike</option>
-  <option value="tom">tom</option>
-  <option value="andy">andy</option>
-</select>
-  <input type="submit" value="submit">
-  <p>Message:
-    <input type="text" name="post" size=70><br>
-    <input type="submit" value="Send message">
-  </p>
-</form>
+  <center>
+  <h2>Send a message</h2>
+  <div class="form-group">
+    <form>
+      <fieldset>
+        <label for="recipient">Recipient:</label>
+        <select name="recipient" id="messageSelect">
+          <option value="">Select recipient</option>
+        </select><br />
+        <label for="content">Content:</label>
+        <textarea class="form-control" id="content" name="content"></textarea>
+        <button type="button" onclick="SendMessage()" class="btn btn-primary btn-md custom">Send</button>
+      </fieldset>
+    </form>
+  </div>
+  </center>
+
 </body>
 </html>
