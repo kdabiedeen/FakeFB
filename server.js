@@ -314,6 +314,17 @@ app.get("/sentMessages", function(req, res) {
   });
 });
 
+app.get("/pageByUser", function(req, res) {
+  var querystring = "SELECT PageId FROM Page WHERE Page.Owner = " + req.query.UserId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else {
+      return res.json(results[0]);
+    }
+  })
+})
+
 app.get("/postsByPage", function(req, res) {
   var querystring = "SELECT PostId FROM Post WHERE Post.PageId = " + req.query.PageId + ";";
   connection.query(querystring, function(err, results) {
@@ -329,6 +340,34 @@ app.get("/postsByPage", function(req, res) {
       return res.json(postIds);
     }
   });
+});
+
+app.post("/createPostOnPage", function(req, res) {
+  var querystring1 = "SELECT MAX(PostId) as max FROM Post;";
+  var max = -1;
+
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var Post = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Post (PostId, Date, Content, CommentCount, Poster, PageId) " +
+                        "VALUES (" + (max + 1) + ",\'" + dateString + "\',\'"  + req.query.Content + "\'," +
+                        "0, "  + req.query.Poster + ", "  + req.query.PageId + ");";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+      })
+    });
 });
 
 app.listen(1185, "0.0.0.0",function() {

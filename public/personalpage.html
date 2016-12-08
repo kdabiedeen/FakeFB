@@ -35,22 +35,28 @@
   </style>
 
   <script>
+    var UserId = localStorage.getItem("id");
+    var PageId = 0;
     $(function() {
-      var UserId = localStorage.getItem("id");
 
-      Page.DisplayPage(UserId, "pageHeader");
 
-      User.DisplayUser(UserId, "profile");
+      Page.GetPageByUser(localStorage.getItem("id"), function(pageId) {
+        PageId = pageId;
 
-      Post.DisplayAllOnPage(UserId, "posts");
 
-      //Post.DisplayAllPerUser(UserId, "posts");
+
+        Page.DisplayPage(UserId, "pageHeader");
+
+        User.DisplayUser(UserId, "profile");
+
+        Post.DisplayPostByPage(PageId, "posts");
+      });
 
     });
 
     function CreatePost () {
       var Content = $("#Content").val();
-      Post.CreatePost(Content, UserId);
+      Post.CreatePost({Content: Content, PageId: PageId, UserId: UserId});
     }
   </script>
 </head>

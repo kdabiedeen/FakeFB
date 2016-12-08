@@ -13,7 +13,19 @@ var Post = {
 		
 	*/
 	CreatePost : function (args) {
-	
+		var Content = args.Content;
+		var UserId = args.UserId;
+		if (args.PageId) {
+			// post to page
+			var PageId = args.PageId;
+
+			$.post("/createPostOnPage", {"Content" : Content, "PageId" : PageId, "Poster": UserId}, function(data) {
+				window.location.reload();
+			});
+		}
+		else if (args.GroupId) {
+			// post to group
+		}
 	},
 
 	DisplayPost : function(PostId, element_id) {

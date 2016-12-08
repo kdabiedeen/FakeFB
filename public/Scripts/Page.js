@@ -35,6 +35,16 @@ var Page = {
 
 	},
 
+	GetPageByUser : function(UserId, callback) {
+		if (!UserId)
+			return;
+
+		$.get("/pageByUser", {"UserId" : UserId}, function(data) {
+			var pageId = data.PageId;
+			callback(pageId);
+		});
+	}
+
 	/* Transactions */
 
 
