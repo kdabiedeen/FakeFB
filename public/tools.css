@@ -117,8 +117,7 @@
 
 /* Page Styling */
 .page {
-	width: 500px;
-	min-height: 100px;
+	width: 100%;
 	overflow: auto;
 	background-color: #eee;
 	border: 1px solid #aaa;

@@ -27,13 +27,23 @@ var Page = {
 			$("<div></div>").addClass("page_name").text("Page: " + page.Name).appendTo(pageHeader);
 
 			// Div page_body
-			var pageBody = $("<div></div>").addClass("page_body").appendTo(pageDiv);
+			//var pageBody = $("<div></div>").addClass("page_body").appendTo(pageDiv);
 
 			// page post
-			$("<div></div>").addClass("page_post").text(page.PostCount + " Posts").appendTo(pageBody);
+			//$("<div></div>").addClass("page_post").text(page.PostCount + " Posts").appendTo(pageBody);
 		});
 
 	},
+
+	GetPageByUser : function(UserId, callback) {
+		if (!UserId)
+			return;
+
+		$.get("/pageByUser", {"UserId" : UserId}, function(data) {
+			var pageId = data.PageId;
+			callback(pageId);
+		});
+	}
 
 	/* Transactions */
 

@@ -1,6 +1,6 @@
 var Post = {
 
-	/* Creates a post with the following argumets:
+	/* Creates a post with the following arguments:
 		PostId
 		Date
 		Content
@@ -13,7 +13,19 @@ var Post = {
 		
 	*/
 	CreatePost : function (args) {
-	
+		var Content = args.Content;
+		var UserId = args.UserId;
+		if (args.PageId) {
+			// post to page
+			var PageId = args.PageId;
+
+			$.get("/createPostOnPage", {"Content" : Content, "PageId" : PageId, "Poster": UserId}, function(data) {
+				window.location.reload();
+			});
+		}
+		else if (args.GroupId) {
+			// post to group
+		}
 	},
 
 	DisplayPost : function(PostId, element_id) {
@@ -73,6 +85,19 @@ var Post = {
 			return;
 
 		$.get("/displayAllPosts", {"UserId": UserId}, function(data) {
+			var postIds = data;
+
+			for (var i = 0; i < postIds.length; i++) {
+				Post.DisplayPost(postIds[i], element_id);
+			}
+		});
+	},
+
+	DisplayPostByPage : function(PageId, element_id) {
+		if (!PageId || !element_id)
+			return;
+
+		$.get("/postsByPage", {"PageId" : PageId}, function(data) {
 			var postIds = data;
 
 			for (var i = 0; i < postIds.length; i++) {
