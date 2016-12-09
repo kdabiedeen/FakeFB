@@ -9,7 +9,13 @@ var Comment = {
 		
 	*/
 	CreateComment : function (args) {
-		
+		var Content = args.Content;
+		var Poster = args.Poster;
+		var PostId = args.PostId;
+
+		$.get("/createComment", {"Content" : Content, "PostId" : PostId, "Poster": Poster}, function(data) {
+			window.location.reload();
+		});
 	},
 
 	DisplayComment : function(CommentId, element_id) {
@@ -29,6 +35,11 @@ var Comment = {
 			$("<a></a>").addClass("comment_delete").val(CommentId).text("x")
 				.click(function() {
 					Comment.DeleteComment($(this).val());
+				}).appendTo(commentHeader);
+
+			$("<a></a>").addClass("comment_edit").val(CommentId).text("Edit")
+				.click(function() {
+					Comment.EditOverlay($(this).val(), comment.Content);
 				}).appendTo(commentHeader);
 
 			// Comment name
@@ -93,6 +104,54 @@ var Comment = {
 		$.get("/deleteComment", {"CommentId": CommentId}, function(data) {
 			window.location.reload();
 		});
+	},
+
+	EditComment : function(args) {
+		$.get("/editComment", args, function(data) {
+			window.location.reload();
+		});
+	},
+
+	EditOverlay : function(CommentId, Content) {
+		if(!CommentId)
+			return;
+
+		var overlay = $("<div></div>").addClass("overlay").appendTo("body");
+		var innerOverlay = $("<div></div>").addClass("innerOverlay").appendTo(overlay);
+
+		// Button to remove overlay
+		$("<a></a>").text("x").click(function() {
+			overlay.remove();
+		}).appendTo(innerOverlay).css({
+			"color":"red",
+			"cursor":"pointer",
+			"float":"right",
+			"font-size":"16px"
+		});
+
+ 		var formGroup = $("<div></div>").addClass("form-group");
+		var form = $("<form></form>").appendTo(formGroup);
+		var fieldset = $("<fieldset></fieldset").appendTo(form);
+		$("<label></label").attr("for", "content").text("Edit Comment:").appendTo(fieldset);
+		$("<br />").appendTo(fieldset);
+		$("<input />").css({
+			"width": "300px"
+		}).attr("type", "text").attr("id", "editContent").val(Content).appendTo(fieldset);
+		$("<br />").appendTo(fieldset);
+		$("<button></button>").val(CommentId).attr("type", "button")
+			.addClass("btn btn-primary btn-md custom").text("Edit")
+			.click(function() {
+				Comment.EditComment({
+					"Content": $("#editContent").val(),
+					"CommentId" : $(this).val(),
+				});
+			}).appendTo(fieldset);
+
+		formGroup.appendTo(innerOverlay);
+
+
+		overlay.show();
+
 	},
 }
 

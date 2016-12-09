@@ -53,6 +53,12 @@ var Post = {
 					Post.DeletePost($(this).val());
 				}).appendTo(postHeader);
 
+
+			$("<a></a>").addClass("post_edit").val(PostId).text("Edit")
+				.click(function() {
+					Post.EditOverlay($(this).val(), post.Content);
+				}).appendTo(postHeader);
+
 			// Post name
 			$("<div></div>").addClass("post_name").text(user.FirstName + " " + user.LastName).appendTo(postHeader);
 
@@ -153,13 +159,61 @@ var Post = {
 		});
 	},
 
+	EditPost : function(args) {
+		$.get("/editPost", args, function(data) {
+			window.location.reload();
+		});
+	},
+
+	EditOverlay : function(PostId, Content) {
+		if(!PostId)
+			return;
+
+		var overlay = $("<div></div>").addClass("overlay").appendTo("body");
+		var innerOverlay = $("<div></div>").addClass("innerOverlay").appendTo(overlay);
+
+		// Button to remove overlay
+		$("<a></a>").text("x").click(function() {
+			overlay.remove();
+		}).appendTo(innerOverlay).css({
+			"color":"red",
+			"cursor":"pointer",
+			"float":"right",
+			"font-size":"16px"
+		});
+
+ 		var formGroup = $("<div></div>").addClass("form-group");
+		var form = $("<form></form>").appendTo(formGroup);
+		var fieldset = $("<fieldset></fieldset").appendTo(form);
+		$("<label></label").attr("for", "content").text("Edit Post:").appendTo(fieldset);
+		$("<br />").appendTo(fieldset);
+		$("<textarea></textarea>").css({
+			"font-size": "16px",
+			"width": "300px"
+		}).attr("id", "content").val(Content).appendTo(fieldset);
+		$("<br />").appendTo(fieldset);
+		$("<button></button>").val(PostId).attr("type", "button")
+			.addClass("btn btn-primary btn-md custom").text("Edit")
+			.click(function() {
+				Post.EditPost({
+					"Content": $("#content").val(),
+					"PostId" : $(this).val(),
+				});
+			}).appendTo(fieldset);
+
+		formGroup.appendTo(innerOverlay);
+
+
+		overlay.show();
+
+	},
+
 	ShowComments: function(PostId) {
 		if (!PostId)
 			return;
 
 		var overlay = $("<div></div>").addClass("overlay").appendTo("body");
-		var innerOverlay = $("<div></div>").addClass("innerOverlay")
-						.attr("id", "postOverlay_" + PostId).appendTo(overlay);
+		var innerOverlay = $("<div></div>").addClass("innerOverlay").appendTo(overlay);
 		var header = $("<h3></h3>").text("Comments:").appendTo(innerOverlay);
 		$("<a></a>").text("x").click(function() {
 			overlay.remove();
@@ -169,6 +223,30 @@ var Post = {
 			"float":"right",
 			"font-size":"16px"
 		});
+
+		var commentContainer = $("<div></div>").addClass("commentContainer")
+						.attr("id", "postOverlay_" + PostId).appendTo(innerOverlay);
+		var footer = $("<div class='overlayFooter'></div>").appendTo(innerOverlay);
+
+		// Form to submit comment
+		var formGroup = $("<div></div>").addClass("form-group");
+		var form = $("<form></form>").appendTo(formGroup);
+		var fieldset = $("<fieldset></fieldset").appendTo(form);
+		$("<label></label").attr("for", "content").text("New Comment:").appendTo(fieldset);
+		$("<input />").attr("type", "text").attr("id", "content").appendTo(fieldset);
+		
+		$("<button></button>").val(PostId).attr("type", "button")
+			.addClass("btn btn-primary btn-md custom").text("Post")
+			.click(function() {
+				Comment.CreateComment({
+					"Content": $("#content").val(),
+					"Poster": localStorage.getItem("id"),
+					"PostId" : $(this).val(),
+				});
+			}).appendTo(fieldset);
+
+		formGroup.appendTo(footer);
+		
 
 		$.get("/showComments", {"PostId" : PostId}, function(data) {
 			for (var i = 0; i < data.length; i++) {

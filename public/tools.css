@@ -111,6 +111,17 @@
 	cursor:pointer;
 }
 
+.post_edit {
+	color:blue;
+	margin: 0 5px;
+	font-size:14px;
+	float:right;
+}
+
+.post_edit:hover {
+	cursor:pointer;
+}
+
 /* Group Styling */
 .group {
 	width: 500px;
@@ -239,6 +250,17 @@
 }
 
 .comment_delete:hover {
+	cursor:pointer;
+}
+
+.comment_edit {
+	color:blue;
+	margin: 0 5px;
+	font-size:14px;
+	float:right;
+}
+
+.comment_edit:hover {
 	cursor:pointer;
 }
 
