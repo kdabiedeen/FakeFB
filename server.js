@@ -1050,6 +1050,37 @@ app.get("/bySpecItem", function(req, res) {
 });
 
 
+app.get("/customerRev", function(req, res) {
+  var querystring = "SELECT Num.Id, MAX(Num.N)FROM (SELECT S.UserId AS Id, SUM(S.NumUnits) AS N FROM Sale S GROUP BY S.UserId) AS Num";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json( { message:"ERROR"});
+    } else {
+      console.log(group);
+      var group = [results[0].Id];
+      return res.json(group);
+    }
+  });
+});
+
+app.get("/activeItems", function(req, res) {
+  var querystring = "SELECT ItemName, SUM(Sale.NumUnits) FROM Sale, Advertisement WHERE Sale.AdId = Advertisement.AdId GROUP BY ItemName LIMIT 3;"
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json( { message:"ERROR"});
+    } else {
+      var messageIds = [];
+      for (var i = 0; i < results.length; i++) {
+        console.log(results[i]);
+        messageIds[i] = results[i].ItemName;
+      }
+      return res.json(messageIds);
+    }
+  });
+});
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);

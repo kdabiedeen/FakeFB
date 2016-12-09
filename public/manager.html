@@ -140,11 +140,25 @@
     <ul id="companyList"></ul>
 </div>
 
+
+
 <div>
     <h3>List Customers Who Purchased Particular Item</h3>
     <input type="text" id="particularItem">
     <button type="button" class="btn btn-primary btn-md custom" onclick="searchSpecItem();">Generate List</button>
     <ul id="particularItemList"></ul>
+</div>
+
+<div>
+    <h3>List Customer Who Generated Most Total Revenue</h3>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="findCustomerRevenue();">Generate List</button>
+    <ul id="totalRevenue"></ul>
+</div>
+
+<div>
+    <h3>Most Active Items</h3>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="findActiveItems();">Generate List</button>
+    <ul id="activeItems"></ul>
 </div>
 
 </body>
@@ -235,6 +249,33 @@ function companySearch(){
       var textnode = document.createTextNode(data[i]);         // Create a text node
       node.appendChild(textnode);
       document.getElementById("particularItemList").appendChild(node);
+      }
+    });
+  }
+
+  function findCustomerRevenue(){
+    $("#totalRevenue").empty();
+    $.get("/customerRev", {}, function(data) {
+      console.log(data);
+      for(var i = 0; i < data.length; i++){
+        var node = document.createElement("li");
+        var textnode = document.createTextNode(data[i]);         // Create a text node
+        node.appendChild(textnode);
+        document.getElementById("totalRevenue").appendChild(node);
+    }
+  });
+  }
+
+  function findActiveItems(){
+//    SELECT ItemName, SUM(Sale.NumUnits) FROM Sale, Advertisement WHERE Sale.AdId = Advertisement.AdId GROUP BY ItemName;
+    $("#activeItems").empty();
+    $.get("/activeItems", {}, function(data) {
+      console.log(data);
+      for(var i = 0; i < data.length; i++){
+        var node = document.createElement("li");
+        var textnode = document.createTextNode(data[i]);         // Create a text node
+        node.appendChild(textnode);
+        document.getElementById("activeItems").appendChild(node);
       }
     });
   }
