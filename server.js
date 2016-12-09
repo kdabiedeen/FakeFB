@@ -342,6 +342,23 @@ app.get("/postsByPage", function(req, res) {
   });
 });
 
+app.get("/postsByGroup", function(req, res) {
+  var querystring = "SELECT PostId FROM Post WHERE Post.GroupId = " + req.query.GroupId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    }
+    else {
+      var postIds = [];
+      for (var i = 0; i < results.length; i++) {
+        postIds[i] = results[i].PostId;
+      }
+
+      return res.json(postIds);
+    }
+  });
+});
+
 app.get("/createPostOnPage", function(req, res) {
   var querystring1 = "SELECT MAX(PostId) as max FROM Post;";
   var max = -1;
@@ -370,6 +387,34 @@ app.get("/createPostOnPage", function(req, res) {
     });
 });
 
+app.get("/createPostOnGroup", function(req, res) {
+  var querystring1 = "SELECT MAX(PostId) as max FROM Post;";
+  var max = -1;
+
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var Post = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Post (PostId, Date, Content, CommentCount, Poster, GroupId, LikeCount) " +
+                        "VALUES (" + (max + 1) + ",\'" + dateString + "\',\'"  + req.query.Content + "\'," +
+                        "0, "  + req.query.Poster + ", "  + req.query.GroupId + ", 0);";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+      })
+    });
+});
+
 app.get("/getAllUsers", function(req, res) {
   var querystring = "SELECT UserId, LastName, FirstName FROM User";
   connection.query(querystring, function(err, results) {
@@ -381,6 +426,20 @@ app.get("/getAllUsers", function(req, res) {
       return res.json(results);
     }
   });
+});
+
+app.get("/getUsersByGroup", function(req, res) {
+  var querystring = "SELECT User.UserId, LastName, FirstName FROM User, Membership " +
+    "WHERE Membership.GroupId = " + req.query.GroupId + " AND Membership.UserId = User.UserId;"; 
+    console.log(querystring);
+    connection.query(querystring, function(err, results) {
+      if (err) {
+        console.log(err);
+        return res.json({message : "ERROR"});
+      } else {
+        return res.json(results);
+      }
+    }); 
 });
 
 app.get("/getAllGroups", function(req, res) {
@@ -760,7 +819,7 @@ app.get("/deleteComment", function(req, res) {
 });
 
 app.get("/renameGroup", function(req, res) { 
-  var querystring = "UPDATE Groups Set Name = " + Group.Name + 
+  var querystring = "UPDATE Groups Set Name = " + req.query.Name + 
 " WHERE GroupId = " + req.query.GroupId + ");";
     connection.query(querystring, function(err, results) {
         if (err) {
@@ -773,24 +832,36 @@ app.get("/renameGroup", function(req, res) {
 });
 
 app.get("/deleteGroup", function(req, res) { 
-  var querystring1 = "DELETE FROM Groups WHERE GroupId = " + Group.Name + ");";
+  var querystring1 = "DELETE FROM Groups WHERE GroupId = " + req.query.Name + ");";
     connection.query(querystring1, function(err, results) {
         if (err) {
           console.log(err);
           return res.json( { message:"ERROR"});
         } else {
-          return res.json( { message:"SUCCESS"});
-        }
-  var querystring2 = "DELETE FROM Membership WHERE GroupId = " + Group.Name + ");";
-    connection.query(querystring2, function(err, results) {
-        if (err) {
-          console.log(err);
-          return res.json( { message:"ERROR"});
-        } else {
-          return res.json( { message:"SUCCESS"});
-        }
-	 })
-    });
+          var querystring2 = "DELETE FROM Membership WHERE GroupId = " + req.query.Name + ");";
+          connection.query(querystring2, function(err, results) {
+          if (err) {
+            console.log(err);
+            return res.json( { message:"ERROR"});
+          } else {
+            return res.json( { message:"SUCCESS"});
+          }
+        });
+    }
+  });
+});
+
+app.get("/getGroupName", function(req, res) {
+  var querystring = "SELECT Name FROM Groups WHERE GroupId = " + req.query.GroupId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json( { message:"ERROR"});
+    } else {
+      var group = results[0];
+      return res.json(group);
+    }
+  });
 });
 
 

@@ -97,7 +97,13 @@ var User = {
 		$.get("/getAllUsers", {}, function(data) {
 			callback(data);
 		});
-	}
+	},
+
+	GetUsersByGroup : function(GroupId, callback) {
+		$.get("/getUsersByGroup", {"GroupId" : GroupId}, function(data) {
+			callback(data);
+		});
+	},
 }
 
 

@@ -25,6 +25,11 @@ var Post = {
 		}
 		else if (args.GroupId) {
 			// post to group
+			var GroupId = args.GroupId;
+
+			$.get("/createPostOnGroup", {"Content" : Content, "GroupId" : GroupId, "Poster" : UserId}, function(data) {
+				window.location.reload();
+			});
 		}
 	},
 
@@ -120,6 +125,19 @@ var Post = {
 			return;
 
 		$.get("/postsByPage", {"PageId" : PageId}, function(data) {
+			var postIds = data;
+
+			for (var i = 0; i < postIds.length; i++) {
+				Post.DisplayPost(postIds[i], element_id);
+			}
+		});
+	},
+
+	DisplayPostByGroup : function(GroupId, element_id) {
+		if (!GroupId || !element_id)
+			return;
+
+		$.get("/postsByGroup", {"GroupId" : GroupId}, function(data) {
 			var postIds = data;
 
 			for (var i = 0; i < postIds.length; i++) {

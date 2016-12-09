@@ -68,6 +68,12 @@ var Group = {
 		$.get("/getAllGroupsByUser", {"UserId" : UserId}, function(data) {
 			callback(data);
 		});
+	},
+
+	GetGroupName : function(GruopId, callback) {
+		$.get("/getGroupName", {"GroupId" : GroupId}, function(data) {
+			callback(data.Name);
+		});
 	}
 
 }

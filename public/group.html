@@ -24,14 +24,14 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
-.dropdown-content a {
+.dropdown-content div {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1}
+.dropdown-content div:hover {background-color: #f1f1f1}
 
 .dropdown:hover .dropdown-content {
     display: block;
@@ -39,6 +39,14 @@
 
 .dropdown:hover .dropbtn {
     background-color: #000000;
+}
+
+.removeMember {
+  color:red;
+}
+
+.removeMember:hover {
+  cursor:pointer;
 }
 </style>
   <title>Groups</title>
@@ -56,37 +64,103 @@
     	border: medium solid #000;
     	text-align: center;
     }
+
+    .form-group {
+      margin: 20px;
+      font-size: 20px;
+    }
+
+    .form-group {
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+      background-color: #cf9;
+      border: 1px solid #aaa;
+    }
+
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script src="../Scripts/User.js"></script>
+  <script src="../Scripts/Post.js"></script>
+  <script src="../Scripts/Comment.js"></script>
+  <script src="../Scripts/Group.js"></script>
 <script>
-function Remove() {
-    if (confirm("Remove this person from the group?") == true) {
-    
-    } 
-}
+  var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
 
-function addToGroup(){
- var newName = prompt("Please enter the name of the user you wish to add", "");
-    
-    if (newName != null) {
-	//add user with that name to group in the database
-            }
-}
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
 
-function deleteGroup() {
-    if (confirm("You are about to delete the group, this action cannot be undone") == true) {
-    
-    } 
-}
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+  };
 
-function renameGroup(){
- var newName = prompt("Please enter your new group name", "");
-    
-    if (newName != null) {
-	//change name in the database
-            }
-}
+  function Remove() {
+      if (confirm("Remove this person from the group?") == true) {
+      
+      } 
+  }
+
+  function addToGroup(){
+   var newUser = prompt("Please enter the ID of the user you wish to add", "");
+      
+      if (!parseInt(newUser))
+        return;
+
+      Group.JoinGroup(GroupId, newUser);
+
+  }
+
+  function deleteGroup() {
+      if (confirm("You are about to delete the group, this action cannot be undone") == true) {
+      
+      } 
+  }
+
+  function renameGroup(){
+   var newName = prompt("Please enter your new group name", "");
+      
+      if (newName != null) {
+  	//change name in the database
+      }
+  }
+
+  function CreatePost () {
+    var Content = $("#Content").val();
+    Post.CreatePost({Content: Content, GroupId: GroupId, UserId: UserId});
+  }
+
+  var GroupId = getUrlParameter('id');
+  var UserId = localStorage.getItem("id");
+
+  $(function() {
+
+    Group.GetGroupName(GroupId, function(groupname) {
+      $("#group_name").text(groupname);
+    });
+
+    User.GetUsersByGroup(GroupId, function(users) {
+      for (var i = 0; i < users.length; i++) {
+        var user = users[i];
+        var groupMemberDiv = $("<div></div>").text(user.FirstName + " " + user.LastName).val(user.UserId).appendTo($("#members"));
+
+        $("<a></a>").addClass("removeMember").text("X").appendTo(groupMemberDiv)
+          .click(function() {
+            Group.UnjoinGroup(GroupId, groupMemberDiv.val());
+        });
+      }
+    });
+
+    Post.DisplayPostByGroup(GroupId, "posts");
+
+  });
 </script>
 </head>
 <body class="panel-default">
@@ -104,20 +178,27 @@ function renameGroup(){
       </ul>
     </div>
   </nav>
-  <h1 id="group_name">Group Name <button onclick="renameGroup()">Rename</button></h1>
-  <button onclick="addToGroup()">Add a user</button><button onclick="deleteGroup()">Delete this group</button>
+  <h1 id="group_name">Group Name </h1>
+  <button onclick="renameGroup()">Rename</button>
+  <button onclick="addToGroup()">Add a user</button>
+  <button onclick="deleteGroup()">Delete this group</button>
 <p>&nbsp;</p>
-  <div id="members"class="dropdown">
+  <div class="dropdown">
   <button class="dropbtn">Users in this group</button>
-  <div class="dropdown-content">
-    <a onclick="Remove()">Group member 1</a>
-    <a onclick="Remove()">Group member 2</a>
-    <a onclick="Remove()">Group member 3</a>
+  <div class="dropdown-content" id="members">
   </div>
 </div>
-  <div id="posts">Posts go here</div>
-  <form id="userPost">Post your thoughts: <input type="text" name="message" size=70><br>
-<input type="submit" value="Post">
-</form>
+  <div id="posts"></div>
+
+  <div class="form-group">
+    <form>
+      <fieldset>
+        <label for="content">New Post:</label>
+        <textarea class="form-control" id="Content" name="Content"></textarea>
+        <button type="button" onclick="CreatePost()" class="btn btn-primary btn-md custom">Post</button>
+      </fieldset>
+    </form>
+  </div>
+
 </body>
 </html>
