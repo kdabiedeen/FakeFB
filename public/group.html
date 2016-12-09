@@ -163,7 +163,7 @@
   });
   function deleteGroup() {
     if (confirm("You are about to delete the group, this action cannot be undone") == true) {
-    deleteGroup(GroupId);
+      Group.DeleteGroup(GroupId);
     } 
 }
 
@@ -171,9 +171,18 @@
     var newName = prompt("Please enter your new group name", "");
     
     if (newName != null) {
-	renameGroup(newName, GroupId);
-            }
-}
+	   Group.RenameGroup(newName, GroupId);
+    }
+  }
+
+  function createGroup() {
+      var newName = prompt("Please name your new group.");
+
+      if (!newName)
+        return;
+
+      Group.CreateGroup(newName, UserId);
+  }
 </script>
 </head>
 <body class="panel-default">
@@ -195,6 +204,7 @@
   <button onclick="renameGroup()">Rename</button>
   <button onclick="addToGroup()">Add a user</button>
   <button onclick="deleteGroup()">Delete this group</button>
+  <button onclick="createGroup()">Make new group</button>
 <p>&nbsp;</p>
   <div class="dropdown">
   <button class="dropbtn">Users in this group</button>

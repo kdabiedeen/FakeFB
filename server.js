@@ -495,6 +495,44 @@ app.get("/unjoinGroup", function(req, res) {
   });
 });
 
+app.get('/createGroup', function(req, res) {
+  // get the userId, then insert
+  var querystring1 = "SELECT MAX(GroupId) as max FROM Groups;";
+  var max = -1;
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var GroupId = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Groups (GroupId, Name, Owner) " +
+                        "VALUES (" + (max + 1) + ", \'" + req.query.Name + "\', " + req.query.Owner +" );"
+    console.log(querystring2);
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          var querystring3 = "SELECT * FROM Groups WHERE Groups.GroupId = " + (max + 1) + ";";
+          console.log(querystring3);
+          connection.query(querystring3, function(err, results) {
+          console.log(results[0]);
+          if (err) {
+            console.log(err);
+            return res.json( { message:"ERROR"});
+          } else {
+            return res.json(results[0]);
+            }
+          })
+        }
+      })
+    });
+});
+
 app.get("/sendMessage", function(req, res) {
   var querystring1 = "SELECT MAX(MessageId) as max FROM Message;";
   var max = -1;
@@ -819,8 +857,8 @@ app.get("/deleteComment", function(req, res) {
 });
 
 app.get("/renameGroup", function(req, res) { 
-  var querystring = "UPDATE Groups Set Name = " + req.query.Name + 
-" WHERE GroupId = " + req.query.GroupId + ");";
+  var querystring = "UPDATE Groups Set Name = \'" + req.query.Name + 
+"\' WHERE GroupId = " + req.query.GroupId + ";";
     connection.query(querystring, function(err, results) {
         if (err) {
           console.log(err);
@@ -832,13 +870,13 @@ app.get("/renameGroup", function(req, res) {
 });
 
 app.get("/deleteGroup", function(req, res) { 
-  var querystring1 = "DELETE FROM Groups WHERE GroupId = " + req.query.Name + ");";
+  var querystring1 = "DELETE FROM Groups WHERE GroupId = " + req.query.GroupId + ";";
     connection.query(querystring1, function(err, results) {
         if (err) {
           console.log(err);
           return res.json( { message:"ERROR"});
         } else {
-          var querystring2 = "DELETE FROM Membership WHERE GroupId = " + req.query.Name + ");";
+          var querystring2 = "DELETE FROM Membership WHERE GroupId = " + req.query.GroupId + ");";
           connection.query(querystring2, function(err, results) {
           if (err) {
             console.log(err);

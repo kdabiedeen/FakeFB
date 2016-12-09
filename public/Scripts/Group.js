@@ -8,8 +8,10 @@ var Group = {
 		MemberCount
 		Members
 	*/
-	CreateGroup : function (args) {
-	
+	CreateGroup : function (Name, Owner) {
+		$.get("./createGroup", {"Name" : Name, "Owner" : Owner}, function(data) {
+			window.location.href = "./group.html?id=" + data.GroupId;
+		});
 	},
 
 	DisplayGroup : function(GroupId, element_id) {
@@ -74,16 +76,16 @@ var Group = {
 		$.get("/getGroupName", {"GroupId" : GroupId}, function(data) {
 			callback(data.Name);
 		});
-	}
+	},
 	
-		RenameGroup : function(newName, GroupId) {
-		$.get("/renameGroup"), {"newName" : newName}, function(data) {
+	RenameGroup : function(newName, GroupId) {
+		$.get("/renameGroup", {"Name" : newName, "GroupId" : GroupId}, function(data) {
 			window.location.reload();
 		});
-	}
+	},
 	
 	DeleteGroup : function(GroupId) {
-		$.get("/deleteGroup"), {"GroupId" : GroupId}, function(data) {
+		$.get("/deleteGroup", {"GroupId" : GroupId}, function(data) {
 			window.location.href = "./main.html";
 		});
 	}
