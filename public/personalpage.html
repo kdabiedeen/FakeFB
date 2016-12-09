@@ -13,6 +13,7 @@
   <script src="../Scripts/Post.js"></script>
   <script src="../Scripts/Comment.js"></script>
   <script src="../Scripts/Page.js"></script>
+  <script src="../Scripts/Group.js"></script>
   <script src="../Scripts/jquery-3.1.0.min.js"></script>
 
 
@@ -32,6 +33,15 @@
       margin: 20px;
       font-size: 20px;
     }
+
+    .form-group {
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+      background-color: #cf9;
+      border: 1px solid #aaa;
+    }
+
   </style>
 
   <script>
@@ -50,6 +60,20 @@
         User.DisplayUser(UserId, "profile");
 
         Post.DisplayPostByPage(PageId, "posts");
+
+        Group.GetAllGroups(function(groups) {
+          for (var i = 0; i < groups.length; i++) {
+            var group = groups[i];
+            $("<option></option>").val(group.GroupId).text(group.Name).appendTo("#joinGroupSelect");
+          }
+        });
+
+        Group.GetAllGroupsByUser(UserId, function(groups) {
+          for (var i = 0; i < groups.length; i++) {
+            var group = groups[i];
+            $("<option></option>").val(group.GroupId).text(group.Name).appendTo("#unjoinGroupSelect");
+          }
+        });
       });
 
     });
@@ -57,6 +81,16 @@
     function CreatePost () {
       var Content = $("#Content").val();
       Post.CreatePost({Content: Content, PageId: PageId, UserId: UserId});
+    }
+
+    function JoinGroup () {
+      var GroupId = $("#joinGroupSelect").val();
+      Group.JoinGroup(GroupId, UserId);
+    }
+
+    function UnjoinGroup() {
+      var GroupId = $("#unjoinGroupSelect").val();
+      Group.UnjoinGroup(GroupId, UserId);
     }
   </script>
 </head>
@@ -91,6 +125,30 @@
         <label for="content">New Post:</label>
         <textarea class="form-control" id="Content" name="Content"></textarea>
         <button type="button" onclick="CreatePost()" class="btn btn-primary btn-md custom">Post</button>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="form-group">
+    <form>
+      <fieldset>
+        <label for="groupId">Join Group:</label>
+        <select name="groupId" style="font-size: 16px;" id="joinGroupSelect">
+          <option value="">Select group</option>
+        </select><br />
+        <button type="button" onclick="JoinGroup()" class="btn btn-primary btn-md custom">Join</button>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="form-group">
+    <form>
+      <fieldset>
+        <label for="groupId">Unjoin Group:</label>
+        <select name="groupId" style="font-size: 16px;" id="unjoinGroupSelect">
+          <option value="">Select group</option>
+        </select><br />
+        <button type="button" onclick="UnjoinGroup()" class="btn btn-primary btn-md custom">Unjoin</button>
       </fieldset>
     </form>
   </div>

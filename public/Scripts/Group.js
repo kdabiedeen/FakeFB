@@ -1,12 +1,4 @@
-$(function() {
-	Group.init();
-});
-
 var Group = {
-
-	init : function () {
-		$("head").append("<link rel='stylesheet' type='text/css' href='./Styles/tools.css' />");
-	},
 
 	/* Creates a group with the following argumets:
 		GroupId
@@ -15,7 +7,6 @@ var Group = {
 		Owner
 		MemberCount
 		Members
-		
 	*/
 	CreateGroup : function (args) {
 	
@@ -55,7 +46,29 @@ var Group = {
 	},
 
 	/* Transactions */
+	GetAllGroups : function(callback) {
+		$.get("/getAllGroups", {}, function(data) {
+			callback(data);
+		});
+	},
 
+	JoinGroup : function(GroupId, UserId) {
+		$.get("/joinGroup", {"GroupId" : GroupId, "UserId" : UserId}, function(data) {
+			window.location.reload();
+		});
+	},
+
+	UnjoinGroup : function(GroupId, UserId) {
+		$.get("/unjoinGroup", {"GroupId" : GroupId, "UserId" : UserId}, function(data) {
+			window.location.reload();
+		});
+	},
+
+	GetAllGroupsByUser : function(UserId, callback) {
+		$.get("/getAllGroupsByUser", {"UserId" : UserId}, function(data) {
+			callback(data);
+		});
+	}
 
 }
 
