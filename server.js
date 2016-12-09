@@ -383,6 +383,59 @@ app.get("/getAllUsers", function(req, res) {
   });
 });
 
+app.get("/getAllGroups", function(req, res) {
+  var querystring = "SELECT GroupId, Name FROM Groups";
+  connection.query(querystring, function(err, results) {
+    if(err) {
+      console.log(err);
+      return res.json({message: "ERROR"});
+    }
+    else {
+      return res.json(results);
+    }
+  });
+});
+
+app.get("/getAllGroupsByUser", function(req, res) {
+  var querystring = "SELECT Groups.GroupId, Groups.Name FROM Groups, Membership WHERE Membership.UserId = " + 
+  req.query.UserId + " AND Groups.GroupId = Membership.GroupId";
+  connection.query(querystring, function(err, results) {
+    if(err) {
+      console.log(err);
+      return res.json({message: "ERROR"});
+    }
+    else {
+      return res.json(results);
+    }
+  });
+});
+
+app.get("/joinGroup", function(req, res) {
+  var querystring = "INSERT INTO Membership (GroupId, UserId) " +
+                    "VALUES (" + req.query.GroupId + ", " + req.query.UserId+ ");";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      return res.json({message:"SUCCESS"});
+    }
+  });
+});
+
+app.get("/unjoinGroup", function(req, res) {
+  var querystring = "DELETE FROM Membership " +
+                    "WHERE GroupId = " + req.query.GroupId + " AND UserId = " + req.query.UserId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      return res.json({message:"SUCCESS"});
+    }
+  });
+});
+
 app.get("/sendMessage", function(req, res) {
   var querystring1 = "SELECT MAX(MessageId) as max FROM Message;";
   var max = -1;
