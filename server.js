@@ -472,6 +472,61 @@ app.get("/unlikeComment", function(req, res) {
   });
 });
 
+app.get("/createComment", function(req, res) {
+  var querystring1 = "SELECT MAX(CommentId) as max FROM Comment;";
+  var max = -1;
+
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var Comment = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Comment (CommentId, Date, Content, Poster, Post, LikeCount) " +
+                        "VALUES (" + (max + 1) + ",\'" + dateString + "\',\'"  + req.query.Content + "\'," +
+                        req.query.Poster + ", "  + req.query.PostId + ", 0);";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+      })
+    });
+});
+
+app.get("/editPost", function(req, res) {
+  var querystring = "UPDATE Post SET Content = \'" + req.query.Content + 
+                    "\' WHERE PostId = " + req.query.PostId + ";";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      return res.json({message:"SUCCESS"});
+    }
+  });
+});
+
+app.get("/editComment", function(req, res) {
+  var querystring = "UPDATE Comment SET Content = \'" + req.query.Content + 
+                    "\' WHERE CommentId = " + req.query.CommentId + ";";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      return res.json({message:"SUCCESS"});
+    }
+  });
+});
+
 app.get("/createAd", function(req, res) {
   var querystring1 = "SELECT MAX(AdId) as max FROM Advertisement;";
   var max = -1;
