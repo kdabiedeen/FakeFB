@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'innercircle'
+    database: 'jdbc_class'
 });
 
 connection.connect(function(err){
@@ -243,7 +243,7 @@ app.get("/displayMessage", function(req, res) {
                     "Sender.UserId as senderId, Sender.FirstName as senderFirst, Sender.LastName as senderLast, " +
                     "Receiver.UserId as receiverId, Receiver.FirstName as receiverFirst, Receiver.LastName as receiverLast " +
                     "FROM Message, User Sender, User Receiver " +
-                    "WHERE Message.MessageId = " + req.query.MessageId + 
+                    "WHERE Message.MessageId = " + req.query.MessageId +
                     " AND Message.Sender = Sender.UserId AND Message.Receiver = Receiver.UserId";
 
   connection.query(querystring, function(err, results) {
@@ -430,7 +430,7 @@ app.get("/getAllUsers", function(req, res) {
 
 app.get("/getUsersByGroup", function(req, res) {
   var querystring = "SELECT User.UserId, LastName, FirstName FROM User, Membership " +
-    "WHERE Membership.GroupId = " + req.query.GroupId + " AND Membership.UserId = User.UserId;"; 
+    "WHERE Membership.GroupId = " + req.query.GroupId + " AND Membership.UserId = User.UserId;";
     console.log(querystring);
     connection.query(querystring, function(err, results) {
       if (err) {
@@ -439,7 +439,7 @@ app.get("/getUsersByGroup", function(req, res) {
       } else {
         return res.json(results);
       }
-    }); 
+    });
 });
 
 app.get("/getAllGroups", function(req, res) {
@@ -456,7 +456,7 @@ app.get("/getAllGroups", function(req, res) {
 });
 
 app.get("/getAllGroupsByUser", function(req, res) {
-  var querystring = "SELECT Groups.GroupId, Groups.Name FROM Groups, Membership WHERE Membership.UserId = " + 
+  var querystring = "SELECT Groups.GroupId, Groups.Name FROM Groups, Membership WHERE Membership.UserId = " +
   req.query.UserId + " AND Groups.GroupId = Membership.GroupId";
   connection.query(querystring, function(err, results) {
     if(err) {
@@ -651,7 +651,7 @@ app.get("/createComment", function(req, res) {
 });
 
 app.get("/editPost", function(req, res) {
-  var querystring = "UPDATE Post SET Content = \'" + req.query.Content + 
+  var querystring = "UPDATE Post SET Content = \'" + req.query.Content +
                     "\' WHERE PostId = " + req.query.PostId + ";";
   connection.query(querystring, function(err, results) {
     if (err) {
@@ -664,7 +664,7 @@ app.get("/editPost", function(req, res) {
 });
 
 app.get("/editComment", function(req, res) {
-  var querystring = "UPDATE Comment SET Content = \'" + req.query.Content + 
+  var querystring = "UPDATE Comment SET Content = \'" + req.query.Content +
                     "\' WHERE CommentId = " + req.query.CommentId + ";";
   console.log(querystring);
   connection.query(querystring, function(err, results) {
@@ -775,6 +775,22 @@ app.get("/collectAds", function(req, res) {
   });
 });
 
+app.get("/collectAdsFull", function(req, res) {
+  var querystring = "SELECT * FROM Advertisement;";
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].AdId + " " + results[i].EmployeeId + " " + results[i].Type + " " + results[i].Date + " " + results[i].Company + " " + results[i].ItemName + " " + results[i].Content +
+          " " + results[i].UnitPrice + " " + results[i].NumUnits;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
 app.get("/recordTrans", function(req, res) {
   var querystring1 = "SELECT MAX(TransId) as max FROM Sale;";
   var max = -1;
@@ -844,6 +860,72 @@ app.get("/deletePost", function(req, res) {
   });
 });
 
+app.get("/groupList", function(req, res) {
+  var querystring = "SELECT DISTINCT GroupId FROM Membership WHERE Membership.UserId =" + req.param("UserId") + ";";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].GroupId;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/bestSeller", function(req, res) {
+  var querystring = "SELECT A.AdId, ItemName, U FROM Advertisement A, (" +
+  "SELECT AdId, COUNT(AdId) AS U FROM SALE S GROUP BY S.AdId ) As Q WHERE Q.AdId = A.AdId ORDER BY U DESC LIMIT 3;";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].ItemName;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/accountHistory", function(req, res) {
+  var querystring = "SELECT * FROM SALE S WHERE S.UserId =" + req.param("UserId") +  ";";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].TransId + " " + results[i].AdId + " " + results[i].NumUnits + " " + results[i].Timestamp;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/salesReport", function(req, res) {
+
+  var querystring = "SELECT * FROM Sale WHERE Year(Sale.Timestamp) = " + req.param("Year") + " AND Month(Sale.Timestamp) = " + req.param("Month") + ";";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          messageIds[i] = results[i].TransId + " " + results[i].UserId + " " + results[i].Timestamp + " " + results[i].AdId + " " + results[i].NumUnits + " " + results[i].AcctNum;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
 app.get("/deleteComment", function(req, res) {
   var querystring = "DELETE FROM Comment WHERE CommentId = " + req.query.CommentId + ";";
   connection.query(querystring, function(err, results) {
@@ -855,9 +937,25 @@ app.get("/deleteComment", function(req, res) {
     }
   });
 });
+app.get("/transByItem", function(req, res) {
+  var querystring = "SELECT * FROM Sale, Advertisement WHERE Sale.AdId = Advertisement.AdId AND Advertisement.ItemName = \'" + req.param("ItemName") + "\';";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i]);
+          messageIds[i] = results[i].TransId + " " + results[i].UserId + " " + results[i].Timestamp + " " + results[i].AdId + " " + results[i].NumUnits + " " + results[i].AcctNum;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
 
-app.get("/renameGroup", function(req, res) { 
-  var querystring = "UPDATE Groups Set Name = \'" + req.query.Name + 
+app.get("/renameGroup", function(req, res) {
+  var querystring = "UPDATE Groups Set Name = \'" + req.query.Name +
 "\' WHERE GroupId = " + req.query.GroupId + ";";
     connection.query(querystring, function(err, results) {
         if (err) {
@@ -869,7 +967,7 @@ app.get("/renameGroup", function(req, res) {
     });
 });
 
-app.get("/deleteGroup", function(req, res) { 
+app.get("/deleteGroup", function(req, res) {
   var querystring1 = "DELETE FROM Groups WHERE GroupId = " + req.query.GroupId + ";";
     connection.query(querystring1, function(err, results) {
         if (err) {
@@ -885,6 +983,39 @@ app.get("/deleteGroup", function(req, res) {
             return res.json( { message:"SUCCESS"});
           }
         });
+      }
+    });
+  });
+app.get("/transByUser", function(req, res) {
+  var querystring = "SELECT * FROM Sale WHERE Sale.UserId = " + req.param("UserId")+ ";";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i]);
+          messageIds[i] = results[i].TransId + " " + results[i].UserId + " " + results[i].Timestamp + " " + results[i].AdId + " " + results[i].NumUnits + " " + results[i].AcctNum;
+        }
+        return res.json(messageIds);
+    }
+  });
+});
+
+app.get("/byCompany", function(req, res) {
+  var querystring = "SELECT ItemName FROM Advertisement WHERE Company = \'" + req.param("Company")+ "\';";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i]);
+          messageIds[i] = results[i].ItemName;
+        }
+        return res.json(messageIds);
     }
   });
 });
@@ -898,6 +1029,22 @@ app.get("/getGroupName", function(req, res) {
     } else {
       var group = results[0];
       return res.json(group);
+    }
+  });
+});
+app.get("/bySpecItem", function(req, res) {
+  var querystring = "SELECT * FROM Sale,Advertisement WHERE Advertisement.ItemName = \'" + req.param("ItemName") + "\' AND Sale.AdId = Advertisement.AdId;";
+  console.log(querystring);
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      return res.json({err:err});
+    } else{
+        var messageIds = [];
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i]);
+          messageIds[i] = results[i].UserId;
+        }
+        return res.json(messageIds);
     }
   });
 });

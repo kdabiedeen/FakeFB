@@ -86,9 +86,32 @@
 
   <div id="mailingList">
     <h3> Produce Customer Mailing List </h3>
-    <button type="button" class="btn btn-primary btn-md custom" onclick="mailingList();">Produce</button>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="mailingList();">Generate</button>
     <br></br>
     <ul id="mailList"></ul>
+  </div>
+
+  <div id="groupList">
+    <h3> Generate Customer Group List</h3>
+    <input type="number" id="groupNum" min="0" class="form-control" id="usr" name="username">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="groupList();">Generate</button>
+    <br></br>
+    <ul id="groupListList"></ul>
+  </div>
+
+  <div id="bestSellerListDiv">
+    <h3> Best Selling Item List </h3>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="bestSeller();">Generate</button>
+    <br></br>
+    <ul id="bestSellerList"></ul>
+  </div>
+
+  <div id="acctHisDiv">
+    <h3> Generate Account History</h3>
+    <input type="number" id="acctNum" min="0" class="form-control" id="usr" name="username">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="accountHistory();">Generate</button>
+    <br></br>
+    <ul id="acctHistory"></ul>
   </div>
 
 </body>
@@ -161,6 +184,46 @@ function mailingList(){
       var textnode = document.createTextNode(data[i]);         // Create a text node
       node.appendChild(textnode);
       document.getElementById("mailingList").appendChild(node);
+      }
+  });
+}
+
+function groupList(){
+  $("#groupListList").empty();
+  var userId = $("#groupNum").val();
+  console.log(userId);
+  $.get("/groupList", {UserId : userId}, function(data) {
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode(data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("groupListList").appendChild(node);
+      }
+  });
+}
+
+function bestSeller(){
+  $("#bestSellerList").empty();
+  $.get("/bestSeller", {}, function(data) {
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode((i+1) + " " + data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("bestSellerList").appendChild(node);
+      }
+  });
+}
+
+function accountHistory(){
+  $("#acctHistory").empty();
+  var userId = $("#acctNum").val();
+  $.get("/accountHistory", {UserId : userId}, function(data) {
+      console.log(data);
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode(data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("acctHistory").appendChild(node);
       }
   });
 }

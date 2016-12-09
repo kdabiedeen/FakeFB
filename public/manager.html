@@ -63,7 +63,7 @@
 
 #Employees li a {
   border: 1px solid #ddd;
-  margin-top: -1px; 
+  margin-top: -1px;
   background-color: #f6f6f6;
   padding: 12px;
   text-decoration: none;
@@ -89,78 +89,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<script>
-function searchableList() {
-    var input, filter, ul, li, a, i;
-    input = document.getElementById("Input");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("Employees");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-
-        }
-    }
-}
-//manager transaction functions
-function displayOptions(){
-	
-}
-
-function addEmployee(){
-	
-}
-
-function monthly(){
-	
-}
-
-function allAdvertItems(){
-	
-}
-
-function transactionByItem(){
-	
-}
-
-function transactionByUser(){
-
-}
-
-function revByItem(){
-
-}
-
-function revByItemType(){
-
-}
-
-function revByUser(){
-
-}
-
-function topSalesman(){
-
-}
-
-function mostActive(){
-
-}
-
-function customersWhoBought(){
-
-}
-
-function companyCatalog(){
-
-}
-
-</script>
-
 </head>
 <body>
   <nav class="navbar navbar-default">
@@ -177,43 +105,137 @@ function companyCatalog(){
       </ul>
     </div>
   </nav>
-<div class="dropdown">
-  <button class="dropbtn">Manager Tools</button>
-  <div class="dropdown-content">
-    <a onclick="addEmployee()">Add employee</a>
-    <a onclick="monthly()">Monthly sales report</a>
-    <a onclick="allAdvertItems()">All advertised items</a>
-    <a onclick="transactionByItem()">Transactions by item</a>
-    <a onclick="transactionByUser()">Transactions by user name</a>
-    <a onclick="revByItem()">Revenue by item</a>
-    <a onclick="revByItemType()">Revenue by item type</a>
-    <a onclick="revByUser()">Revenue by user</a>
-    <a onclick="topSalesman()">Top Salesman</a>
-    <a onclick="mostActive()">Most active items</a>
-    <a onclick="customersWhoBought()">Customers by item bought</a>
-    <a onclick="companyCatalog()">Get List of items from a company</a>
-  </div>
-</div>
-<h1>Employees</h1>
-<input type="text" id="Input" onkeyup="searchableList()" placeholder="Search for employees..." title="Type in a name">
 
-<ul id="Employees">
-  <li><a onclick="displayOptions()">Tony</a></li>
-  <li><a onclick="displayOptions()">Agnes</a></li>
-  <li><a onclick="displayOptions()">Billy</a></li>
-  <li><a onclick="displayOptions()">Rob</a></li>
-  <li><a onclick="displayOptions()">Calvin</a></li>
-  <li><a onclick="displayOptions()">Tina</a></li>
-  <li><a onclick="displayOptions()">Cindy</a></li>
-  <li><a onclick="displayOptions()">Donald</a></li>
-  <li><a onclick="displayOptions()">Gene</a></li>
-  <li><a onclick="displayOptions()">Kyle</a></li>
-  <li><a onclick="displayOptions()">Chet</a></li>
-  <li><a onclick="displayOptions()">Mark</a></li>
-  <li><a onclick="displayOptions()">Paul</a></li>
-  <li><a onclick="displayOptions()">Steve</a></li>
-  <li><a onclick="displayOptions()">Mike</a></li>
-  <li><a onclick="displayOptions()">Karl</a></li>
-</ul>
+<div>
+    <h3>Obtain Sales Report</h3>
+    <input type="month" id="selectMonth"></select>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="salesReport();">Generate Report</button>
+    <ul id="salesReportList"></ul>
+</div>
+
+<div>
+    <h3>Produce List of Advetised Items</h3>
+    <button type="button" class="btn btn-primary btn-md custom" onclick="generateAdList();">Generate List</button>
+    <ul id="adList"></ul>
+</div>
+
+<div>
+    <h3>Produce List of Transactions by Item Names</h3>
+    <input type="text" id="itemNameField">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="transByItemNames();">Generate List</button>
+    <ul id="transByItem"></ul>
+</div>
+
+<div>
+    <h3>Produce List of Transactions by Usernames</h3>
+    <input type="number" id="UserNameField">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="transByUserNames();">Generate List</button>
+    <ul id="transByUser"></ul>
+</div>
+
+<div>
+    <h3>Produce List of Items By Company Name</h3>
+    <input type="text" id="companyField">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="companySearch();">Generate List</button>
+    <ul id="companyList"></ul>
+</div>
+
+<div>
+    <h3>List Customers Who Purchased Particular Item</h3>
+    <input type="text" id="particularItem">
+    <button type="button" class="btn btn-primary btn-md custom" onclick="searchSpecItem();">Generate List</button>
+    <ul id="particularItemList"></ul>
+</div>
+
 </body>
 </html>
+
+
+<script>
+
+function salesReport(){
+  $("#salesReportList").empty();
+  var month_date = $("#selectMonth").val();
+  var year = month_date.split("-")[0];
+  var month = month_date.split("-")[1];
+  console.log(year);
+  console.log(month);
+  $.get("/salesReport", {Year : year, Month : month}, function(data) {
+    console.log(data);
+    for(var i = 0; i < data.length; i++){
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(data[i]);         // Create a text node
+    node.appendChild(textnode);
+    document.getElementById("salesReportList").appendChild(node);
+    }
+  });
+}
+
+function generateAdList(){
+  $("#adList").empty();
+  $.get("/collectAdsFull", {}, function(data) {
+    for(var i = 0; i < data.length; i++){
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(data[i]);         // Create a text node
+    node.appendChild(textnode);
+    document.getElementById("adList").appendChild(node);
+    }
+  });
+}
+
+function transByItemNames(){
+  $("#transByItem").empty();
+  var itemName = $("#itemNameField").val();
+  $.get("/transByItem", {ItemName: itemName}, function(data) {
+    console.log(data);
+    for(var i = 0; i < data.length; i++){
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(data[i]);         // Create a text node
+    node.appendChild(textnode);
+    document.getElementById("transByItem").appendChild(node);
+    }
+  });
+}
+
+function transByUserNames(){
+  $("#transByUser").empty();
+  var userName = $("#UserNameField").val();
+  $.get("/transByUser", {UserId: userName}, function(data) {
+    console.log(data);
+    for(var i = 0; i < data.length; i++){
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(data[i]);         // Create a text node
+    node.appendChild(textnode);
+    document.getElementById("transByUser").appendChild(node);
+    }
+  });
+}
+
+function companySearch(){
+  $("#companyList").empty();
+  var company = $("#companyField").val();
+  $.get("/byCompany", {Company: company}, function(data) {
+    console.log(data);
+    for(var i = 0; i < data.length; i++){
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(data[i]);         // Create a text node
+    node.appendChild(textnode);
+    document.getElementById("companyList").appendChild(node);
+    }
+  });
+}
+
+  function searchSpecItem(){
+    $("#particularItemList").empty();
+    var itemName = $("#particularItem").val();
+      $.get("/bySpecItem", {ItemName: itemName}, function(data) {
+      console.log(data);
+      for(var i = 0; i < data.length; i++){
+      var node = document.createElement("li");
+      var textnode = document.createTextNode(data[i]);         // Create a text node
+      node.appendChild(textnode);
+      document.getElementById("particularItemList").appendChild(node);
+      }
+    });
+  }
+</script>
