@@ -75,7 +75,18 @@ var Group = {
 			callback(data.Name);
 		});
 	}
-
+	
+		RenameGroup : function(newName, GroupId) {
+		$.get("/renameGroup"), {"newName" : newName}, function(data) {
+			window.location.reload();
+		});
+	}
+	
+	DeleteGroup : function(GroupId) {
+		$.get("/deleteGroup"), {"GroupId" : GroupId}, function(data) {
+			window.location.href = "./main.html";
+		});
+	}
 }
 
 

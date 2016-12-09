@@ -161,6 +161,19 @@
     Post.DisplayPostByGroup(GroupId, "posts");
 
   });
+  function deleteGroup() {
+    if (confirm("You are about to delete the group, this action cannot be undone") == true) {
+    deleteGroup(GroupId);
+    } 
+}
+
+  function renameGroup(){
+    var newName = prompt("Please enter your new group name", "");
+    
+    if (newName != null) {
+	renameGroup(newName, GroupId);
+            }
+}
 </script>
 </head>
 <body class="panel-default">
