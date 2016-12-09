@@ -88,6 +88,12 @@ var Group = {
 		$.get("/deleteGroup", {"GroupId" : GroupId}, function(data) {
 			window.location.href = "./main.html";
 		});
+	},
+
+	VisitGroup: function() {
+		var GroupId = prompt("Choose a group to visit.");
+
+		window.location.href= "./group.html?id=" + GroupId;
 	}
 }
 

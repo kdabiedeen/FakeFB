@@ -104,6 +104,17 @@ var User = {
 			callback(data);
 		});
 	},
+
+	Logout : function() {
+	  console.log("run logout");
+	  localStorage.removeItem("FirstName");
+	  localStorage.removeItem("LastName");
+	  localStorage.removeItem("id");
+	  localStorage.removeItem("Account");
+	  localStorage.removeItem("SSN");
+	  window.location.href = "./login.html";
+	}
 }
+
 
 

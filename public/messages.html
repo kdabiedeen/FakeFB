@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>InnerCircle</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="tools.css">
   <script src="../Scripts/Message.js"></script>
   <script src="../Scripts/User.js"></script>
+    <script src="../Scripts/Group.js"></script>
 
   <style type="text/css">
       #group_name {
@@ -69,7 +70,16 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
     var UserId = localStorage.getItem("id");
+    var SSN = localStorage.getItem("SSN");
     $(function() {
+
+      if (!parseInt(UserId)) {
+          window.location.href = "./login.html";
+        }
+
+      if (!parseInt(SSN)) {
+          $("#adlink").addClass("hidden");
+       }
 
       $("#userName").text(localStorage.getItem("FirstName") + " " + localStorage.getItem("LastName"));
 
@@ -99,20 +109,25 @@
   </script>
 </head>
 <body class="panel-default">
+
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Inner Circle</a>
+        <a class="navbar-brand" href="#">InnerCircle</a>
       </div>
       <ul class="nav navbar-nav">
         <li><a href="./main.html">News Feed</a></li>
         <li><a href="./personalpage.html">Personal Page</a></li>
-        <li class="active"><a href="#">Messages</a></li>
-        <li><a href="./group.html">Groups</a></li>
-        <li><a href="./login.html">Logout</a></li>
+        <li class="active"><a href="./messages.html">Messages</a></li>
+        <li><a href="#" onclick="Group.VisitGroup();">Groups</a></li>
+        <li id="adlink"><a href="./advertisements.html">Representative</a></li>
+        <li><a href="./manager.html">Manager</a></li>
+        <li><a onclick="User.Logout()" href="#">Logout</a></li>
+
       </ul>
     </div>
   </nav>
+
   <h1 id="userName"></h1>
   <center>
   <div id="messages">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>InnerCircle</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -10,6 +10,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="../Scripts/User.js"></script>
+  <script src="../Scripts/Group.js"></script>
   <script src="../Scripts/jquery-3.1.0.min.js"></script>
   <script>
     console.log(localStorage.getItem("id"));
@@ -19,16 +20,16 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Not Facebook</a>
+        <a class="navbar-brand" href="#">InnerCircle</a>
       </div>
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">News Feed</a></li>
         <li><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="./messages.html">Messages</a></li>
-        <li><a href="./group.html">Groups</a></li>
+        <li><a href="#" onclick="Group.VisitGroup();">Groups</a></li>
         <li id="adlink"><a href="./advertisements.html">Representative</a></li>
         <li><a href="./manager.html">Manager</a></li>
-        <li onclick="logout()"><a>Logout</a></li>
+        <li><a onclick="User.Logout()" href="#">Logout</a></li>
 
       </ul>
     </div>
@@ -75,6 +76,11 @@ function start(){
     document.getElementById('welcomebanner').innerHTML = "Welcome " + localStorage.getItem("FirstName") + "!";
   }
 
+  var UserId = localStorage.getItem("id");
+  if (!parseInt(UserId)) {
+    window.location.href = "./login.html";
+  }
+
   $.get("/isEmployee", {UserId : localStorage.getItem("id")}, function(data) {
       if(data.message == 'EMPTY'){
         $("#adlink").addClass("hidden");
@@ -118,17 +124,6 @@ function showDiv2(){
   var adId = data.split(" ")[0];
 
   $("#label2").text("Number of Units (" + adId + ")");
-}
-
-function logout(){
-  console.log("run logout");
-  localStorage.removeItem("FirstName");
-  localStorage.removeItem("LastName");
-  localStorage.removeItem("id");
-  localStorage.removeItem("Account");
-  location.reload()
-
-  return 1;
 }
 
 function SubmitOrder1(){

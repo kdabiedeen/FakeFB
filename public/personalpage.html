@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>InnerCircle</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -14,6 +14,7 @@
   <script src="../Scripts/Comment.js"></script>
   <script src="../Scripts/Page.js"></script>
   <script src="../Scripts/Group.js"></script>
+  <script src="../Scripts/Employee.js"></script>
   <script src="../Scripts/jquery-3.1.0.min.js"></script>
 
 
@@ -46,9 +47,17 @@
 
   <script>
     var UserId = localStorage.getItem("id");
+    var SSN = localStorage.getItem("SSN");
     var PageId = 0;
     $(function() {
 
+        if (!parseInt(UserId)) {
+          window.location.href = "./login.html";
+        }
+
+        if (!parseInt(SSN)) {
+          $("#adlink").addClass("hidden");
+        }
 
       Page.GetPageByUser(localStorage.getItem("id"), function(pageId) {
         PageId = pageId;
@@ -57,7 +66,14 @@
 
         Page.DisplayPage(UserId, "pageHeader");
 
-        User.DisplayUser(UserId, "profile");
+        if (!parseInt(SSN)) {
+          User.DisplayUser(UserId, "profile");  
+          $("#employeeContainer").show();     
+        }
+        else {
+          Employee.DisplayEmployee(SSN, "profile");
+          $("#editEmployeeContainer").show(); 
+        }
 
         Post.DisplayPostByPage(PageId, "posts");
 
@@ -92,20 +108,48 @@
       var GroupId = $("#unjoinGroupSelect").val();
       Group.UnjoinGroup(GroupId, UserId);
     }
+
+    function createEmployee() {
+      var SSN = $("#SSN").val();
+      var Hourly = $("#Hourly").val();
+
+      if (!parseInt(SSN) || !parseFloat(Hourly))
+        return;
+
+      Employee.CreateEmployee({"SSN":SSN, "Hourly":Hourly, "UserId":UserId});
+
+    }
+
+    function editEmployee() {
+      var Hourly = $("#editHourly").val();
+
+      if (!parseFloat(Hourly))
+        return;
+
+      Employee.EditEmployee({"SSN":SSN, "Hourly":Hourly, "UserId":UserId});
+
+    }
+
+    function removeEmployee() {
+      Employee.RemoveEmployee(SSN);
+    }
   </script>
 </head>
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Not Facebook</a>
+        <a class="navbar-brand" href="#">InnerCircle</a>
       </div>
       <ul class="nav navbar-nav">
         <li><a href="./main.html">News Feed</a></li>
         <li class="active"><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="./messages.html">Messages</a></li>
-        <li><a href="./group.html">Groups</a></li>
-        <li><a href="./login.html">Logout</a></li>
+        <li><a href="#" onclick="Group.VisitGroup();">Groups</a></li>
+        <li id="adlink"><a href="./advertisements.html">Representative</a></li>
+        <li><a href="./manager.html">Manager</a></li>
+        <li><a onclick="User.Logout()" href="#">Logout</a></li>
+
       </ul>
     </div>
   </nav>
@@ -149,6 +193,33 @@
           <option value="">Select group</option>
         </select><br />
         <button type="button" onclick="UnjoinGroup()" class="btn btn-primary btn-md custom">Unjoin</button>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="form-group" id="employeeContainer" style="display:none;">
+    <form>
+      <fieldset>
+        <label for="SSN">Become an Employee:</label>
+        <label for="SSN">SSN:</label>
+        <input id="SSN" name="SSN" type="text" />
+        <br />
+        <label for="Hourly">Hourly Wage:</label>
+        <input id="Hourly" name="Hourly" type="text" />
+        <button type="button" onclick="createEmployee()" class="btn btn-primary btn-md custom">Become an Employee</button>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="form-group" id="editEmployeeContainer" style="display:none;">
+    <form>
+      <fieldset>
+        <label for="editSSN">Edit Employee Info:</label>
+        <br />
+        <label for="editHourly">Hourly Wage:</label>
+        <input id="editHourly" name="editHourly" type="text" />
+        <button type="button" onclick="editEmployee()" class="btn btn-primary btn-md custom">Edit</button>
+        <button type="button" style="background-color: red;" onclick="removeEmployee()" class="btn btn-primary btn-md custom">Remove</button>
       </fieldset>
     </form>
   </div>

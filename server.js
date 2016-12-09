@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'jdbc_class'
+    database: 'innercircle'
 });
 
 connection.connect(function(err){
@@ -102,6 +102,63 @@ app.get('/signUp', function(req, res) {
         }
       })
     });
+});
+
+app.get("/editEmployee", function(req, res) {
+  var querystring = "UPDATE Employee SET Hourly = " + req.query.Hourly + " WHERE Employee.SSN = " + 
+    req.query.SSN + ";";
+    connection.query(querystring, function(err, results) {
+      if(err) {
+        console.log(err);
+        return res.json({message: "ERROR"});
+      } else {
+        return res.json({message : "SUCCESS"});
+      }
+    })
+});
+
+app.get("/getEmployee", function(req, res) {
+  var querystring = "SELECT * FROM Employee, User WHERE Employee.SSN = " + 
+    req.query.SSN + " AND Employee.UserId = User.UserId;";
+    connection.query(querystring, function(err, results) {
+      if(err) {
+        console.log(err);
+        return res.json({message: "ERROR"});
+      } else {
+        return res.json(results[0]);
+      }
+    })
+});
+
+app.get("/removeEmployee", function(req, res) {
+  var querystring = "DELETE FROM Employee WHERE Employee.SSN = " + 
+    req.query.SSN + ";";
+    connection.query(querystring, function(err, results) {
+      if(err) {
+        console.log(err);
+        return res.json({message: "ERROR"});
+      } else {
+        return res.json({message:"SUCCESS"});
+      }
+    })
+});
+
+app.get("/createEmployee", function(req, res) {
+  var date = new Date();
+  var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      
+  var querystring = "INSERT INTO Employee (SSN, StartDate, Hourly, UserId) "+
+                    "VALUES(" + req.query.SSN + ", \'" + dateString + "\', " +
+                     req.query.Hourly + ", " + req.query.UserId + ");";
+
+  connection.query(querystring, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      return res.json({message:"SUCCESS"});
+    }
+  })
 });
 
 app.get("/displayUser", function(req, res) {
@@ -323,7 +380,35 @@ app.get("/pageByUser", function(req, res) {
       return res.json(results[0]);
     }
   })
-})
+});
+
+app.get("/createPage", function(req, res) {
+  var querystring1 = "SELECT MAX(PageId) as max FROM Page;";
+  var max = -1;
+
+  connection.query(querystring1, function(err, results) {
+    if (err) {
+      console.log(err);
+      return res.json({message:"ERROR"});
+    } else {
+      var Page = results[0];
+      var date = new Date();
+      var dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+      max = results[0].max;
+    }
+    var querystring2 = "INSERT INTO Page (PageId, Name, Owner, PostCount) " +
+                        "VALUES (" + (max + 1) + ",\'" + req.query.Name + "\', "  + req.query.Owner + "," +
+                        " 0);";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+      })
+    });
+});
 
 app.get("/postsByPage", function(req, res) {
   var querystring = "SELECT PostId FROM Post WHERE Post.PageId = " + req.query.PageId + ";";

@@ -49,7 +49,7 @@
   cursor:pointer;
 }
 </style>
-  <title>Groups</title>
+  <title>InnerCircle</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -139,9 +139,22 @@
 
   var GroupId = getUrlParameter('id');
   var UserId = localStorage.getItem("id");
+    var SSN = localStorage.getItem("SSN");
 
   $(function() {
 
+      if (!parseInt(UserId)) {
+        window.location.href = "./login.html";
+      }
+
+    if (!parseInt(SSN)) {
+        $("#adlink").addClass("hidden");
+     }
+
+    if (!parseInt(GroupId)) {
+      window.location.href = "./main.html";
+    }
+    else {
     Group.GetGroupName(GroupId, function(groupname) {
       $("#group_name").text(groupname);
     });
@@ -159,6 +172,7 @@
     });
 
     Post.DisplayPostByGroup(GroupId, "posts");
+  }
 
   });
   function deleteGroup() {
@@ -186,20 +200,25 @@
 </script>
 </head>
 <body class="panel-default">
+
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Inner Circle</a>
+        <a class="navbar-brand" href="#">InnerCircle</a>
       </div>
       <ul class="nav navbar-nav">
-        <li><a href="./main.html">News Feed</a></li>
+        <li><a href="#">News Feed</a></li>
         <li><a href="./personalpage.html">Personal Page</a></li>
         <li><a href="./messages.html">Messages</a></li>
-        <li class="active"><a href="#">Groups</a></li>
-        <li><a href="./login.html">Logout</a></li>
+        <li class="active"><a href="#" onclick="Group.VisitGroup();">Groups</a></li>
+        <li id="adlink"><a href="./advertisements.html">Representative</a></li>
+        <li><a href="./manager.html">Manager</a></li>
+        <li><a onclick="User.Logout()" href="#">Logout</a></li>
+
       </ul>
     </div>
   </nav>
+
   <h1 id="group_name">Group Name </h1>
   <button onclick="renameGroup()">Rename</button>
   <button onclick="addToGroup()">Add a user</button>

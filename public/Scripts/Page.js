@@ -7,7 +7,9 @@ var Page = {
 		PostCount		
 	*/
 	CreatePage : function (args) {
-	
+		$.get("/createPage", args, function(data) {
+			window.location.href = "./main.html";
+		});
 	},
 
 	DisplayPage : function(PageId, element_id) {
