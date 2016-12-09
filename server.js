@@ -759,6 +759,41 @@ app.get("/deleteComment", function(req, res) {
   });
 });
 
+app.get("/renameGroup", function(req, res) { 
+  var querystring = "UPDATE Groups Set Name = " + Group.Name + 
+" WHERE GroupId = " + req.query.GroupId + ");";
+    connection.query(querystring, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+    });
+});
+
+app.get("/deleteGroup", function(req, res) { 
+  var querystring1 = "DELETE FROM Groups WHERE GroupId = " + Group.Name + ");";
+    connection.query(querystring1, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+  var querystring2 = "DELETE FROM Membership WHERE GroupId = " + Group.Name + ");";
+    connection.query(querystring2, function(err, results) {
+        if (err) {
+          console.log(err);
+          return res.json( { message:"ERROR"});
+        } else {
+          return res.json( { message:"SUCCESS"});
+        }
+	 })
+    });
+});
+
+
 app.listen(1185, "0.0.0.0",function() {
     //var host = server.address();
     console.log('server listening on port ' + 1185);
